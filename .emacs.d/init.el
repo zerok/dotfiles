@@ -113,10 +113,10 @@
 (setq org-agenda-custom-commands
       '(("h" "Tasks in the home context"
          ((agenda "" ((org-agenda-entry-types '(:deadline :scheduled))))
-          (tags-todo "@home")))
+          (tags-todo "@home-TODO=\"WAITING\"-TODO=\"DONE\"-TODO=\"CANCELLED\"")))
         ("w" "Tasks in the work context"
          ((agenda "" ((org-agenda-entry-types '(:deadline :scheduled))))
-          (tags-todo "@work")))
+          (tags-todo "@work-TODO=\"WAITING\"-TODO=\"DONE\"-TODO=\"CANCELLED\"")))
         )
       )
 (setq org-todo-keywords
