@@ -122,18 +122,35 @@
 (setq org-todo-keywords
       '((sequence "TODO(t)" "STARTED(s)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)"))
       )
+(setq org-tag-alist '(("@work" . ?w) ("@home" . ?h)))
 
 (setq org-capture-templates
-      '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
-         "* TODO %?\n")
+      '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Inbox")
+         "* TODO %?\n  :PROPERTIES:\n  :CREATED: %T\n  :END:\n")
         ("s" "Someday" entry (file "~/org/someday.org")
-         "* %?")
+         "* %?\n  :PROPERTIES:\n  :CREATED: %T\n  :END:\n")
         ("r" "To Read" entry (file "~/org/toread.org")
-         "* TODO %?  :@home:\n")
+         "* TODO %?  :@home:\n  :PROPERTIES:\n  :CREATED: %T\n  :END:\n")
         ))
 (setq org-agenda-files '("~/org" "~/org/travel", "~/org/work/meeting-notes"))
 (setq org-enforce-todo-dependencies t)
 (setq markdown-reference-location 'end)
+
+(defun zerok-make-script-executable ()
+  "Checks if the current file is a script and if so makes it executable"
+  (interactive)
+  (save-excursion
+    (goto-char 0)
+    (when (looking-at "^#!/")
+      (when (not (file-executable-p buffer-file-name))
+        (set-file-modes buffer-file-name (logior executable-chmod (file-modes buffer-file-name)))
+        )
+      )
+    )
+  )
+
+(add-hook 'after-save-hook 'zerok-make-script-executable)
+
 (load-file "~/.emacs.d/bindings.el")
 (load-file "~/.emacs.d/init-go.el")
 (load-file "~/.emacs.d/init-javascript.el")
