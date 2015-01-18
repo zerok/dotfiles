@@ -112,10 +112,10 @@
 
 (setq org-agenda-custom-commands
       '(("h" "Tasks in the home context"
-         ((agenda "")
+         ((agenda "" ((org-agenda-entry-types '(:deadline :scheduled))))
           (tags-todo "@home")))
         ("w" "Tasks in the work context"
-         ((agenda "")
+         ((agenda "" ((org-agenda-entry-types '(:deadline :scheduled))))
           (tags-todo "@work")))
         )
       )
