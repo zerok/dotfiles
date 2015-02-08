@@ -15,6 +15,7 @@
 (global-set-key (kbd "M-t") 'helm-cmd-t)
 (global-set-key (kbd "<f8>") 'neotree-toggle)
 (global-set-key (kbd "C-<f6>") 'magit-status)
+(global-set-key (kbd "C-c C-g") 'ace-jump-char-mode)
 
 (add-hook 'org-mode-hook (lambda()
                            (require 'helm-org)
@@ -89,9 +90,33 @@ that line the user currenty is."
   (interactive)
   (if (not (bolp))
       (and
-      (re-search-backward "\\W")
-      (forward-char)
-      )
+       (re-search-backward "\\W")
+       (forward-char)
+       )
     )
   (kill-word 1)
   )
+
+
+;; A simple heading completion script for working within RST documents. Just
+;; enter the first character of the heading indicator (=, -, ...) into the line
+;; following a headline and complete the line with C-c C-c.
+(defun zs-rst-complete-heading ()
+  "zs-rst-complete-headline completes the headline indicator for the length of the headline"
+  (interactive)
+  (let (
+        (length-to-end 0)
+        (start-point 0)
+        (headline-char (char-before))
+        )
+    (save-excursion
+      (previous-line)
+      (setq start-point (point))
+      (move-end-of-line nil)
+      (setq length-to-end (- (point) start-point))
+      )
+    (insert (make-string length-to-end headline-char))
+    )
+  )
+
+(define-key rst-mode-map "\C-c\C-c" 'zs-rst-complete-heading)
