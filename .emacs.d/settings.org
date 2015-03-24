@@ -325,6 +325,33 @@ feel more similar to things like footnotes:
 #+END_SRC
 
 ** JavaScript
+
+*** JSCS with Flycheck
+
+Right now I don't use JSCS anymore in favor of ESLint, but this would add a
+simple handler to Flycheck that doesn't die whenever you are in a project that
+doesn't use JSCS ...
+
+#+BEGIN_SRC emacs-lisp
+(require 'flycheck)
+;;; Code
+;; https://github.com/ananthakumaran/dotfiles/blob/master/.emacs.d/init-js.el
+(flycheck-define-checker javascript-jscs
+  "A JavaScript code style checker. See URL `https://github.com/mdevils/node-jscs'."
+  :command ("/Users/zerok/.local/bin/smart-jscs.py" "--reporter" "checkstyle" source)
+  :error-parser flycheck-parse-checkstyle
+  ;; :next-checkers (javascript-jshint)
+  :modes (js-mode js2-mode))
+
+;; (add-to-list 'flycheck-checkers 'javascript-jscs)
+#+END_SRC
+*** JSX support
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.jsx\\'" . jsx-mode))
+(autoload 'jsx-mode "jsx-mode" "JSX mode" t)
+#+END_SRC
+
 ** Python
 ** Sass/SCSS
 ** HTML
