@@ -1,0 +1,492 @@
+* General Emacs settings
+** Theme
+#+begin_src emacs-lisp
+(load-theme 'smyx t)
+#+end_src
+** Enable evil mode
+
+While most of Emacs is great, the editing experience I've come to love from
+using VIM for more than a decade is something I don't want to miss. And if I can
+combine that with the awesome development environment that Emacs+LISP is: All
+the better!
+
+#+begin_src emacs-lisp
+(setq evil-want-C-u-scroll t)
+(require 'evil)
+(evil-mode 1)
+#+end_src
+
+** Simple confirmation
+
+By default Emacs asks for "yes" or "no" during confirmation dialogs. "y" and "n"
+should really suffice...
+
+#+begin_src emacs-lisp
+(defalias 'yes-or-no-p 'y-or-n-p)
+#+end_src
+
+** OSX Integration
+
+** Indentation & line width
+#+begin_src emacs-lisp
+(setq-default fill-column 80)
+(setq-default indent-tabs-mode nil) ;; don't use tabs
+(setq-default tab-width 4)
+(setq indent-line-function 'insert-tab)
+#+end_src
+
+And disable auto-fill-mode by default as it tends to get in the way. I just
+enable it whenever I need it.
+
+#+begin_src emacs-lisp
+(auto-fill-mode -1)
+#+end_src
+
+*** The Meta key
+
+I need the Options/Alt key for special characters on the US intl. keyboard and
+therefore can't use it as the Meta key. Instead I'm using the CMD key since all
+I'd use it for otherwise is for interactions with the clipboard.
+
+#+begin_src emacs-lisp
+(setq mac-option-modifier 'none)
+#+end_src
+
+*** Shared clipboard
+
+http://stackoverflow.com/questions/64360/how-to-copy-text-from-emacs-to-another-application-on-linux
+
+#+begin_src emacs-lisp
+(setq x-select-enable-clipboard t)
+#+end_src
+
+** Renaming the current buffer & file
+
+#+begin_src emacs-lisp
+;; source: http://steve.yegge.googlepages.com/my-dot-emacs-file
+(defun rename-file-and-buffer (new-name)
+  "Renames both current buffer and file it's visiting to NEW-NAME."
+  (interactive "sNew name: ")
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (if (not filename)
+        (message "Buffer '%s' is not visiting a file!" name)
+      (if (get-buffer new-name)
+          (message "A buffer named '%s' already exists!" new-name)
+        (progn
+          (rename-file name new-name 1)
+          (rename-buffer new-name)
+          (set-visited-file-name new-name)
+          (set-buffer-modified-p nil))))))
+#+end_src
+
+** IDO and Helm
+
+I really like the way esp. Helm allows for easy navigation within the options
+buffers. So I basically enabled Helm and IDO in multiple places to make this
+whole process easier.
+
+#+begin_src emacs-lisp
+(require 'helm-config)
+(ido-mode 1)
+(ido-everywhere 1)
+(setq ido-use-faces nil)
+#+end_src
+
+** Line handling
+#+BEGIN_SRC emacs-lisp
+(add-hook 'markdown-mode-hook 'auto-fill-mode)
+(add-hook 'rst-mode-hook 'auto-fill-mode)
+(add-hook 'org-mode-hook 'auto-fill-mode)
+(add-hook 'prog-mode-hook 'toggle-truncate-lines)
+(global-linum-mode 1) ;; show the current line number in the gutter
+(global-hl-line-mode 1) ;; highlight the currentl ine
+#+END_SRC
+
+** Executable scripts
+Whenever I work on a file that has a '#!' header, I'm pretty sure I want to make
+it executable. Since I tend to forget that, Emacs should do that for me on:
+
+#+BEGIN_SRC emacs-lisp
+(defun zerok-make-script-executable ()
+  "Checks if the current file is a script and if so makes it executable"
+  (interactive)
+  (save-excursion
+    (goto-char 0)
+    (when (looking-at "^#!/")
+      (when (not (file-executable-p buffer-file-name))
+        (set-file-modes buffer-file-name (logior 73 (file-modes buffer-file-name)))
+        )
+      )
+    )
+  )
+(add-hook 'after-save-hook 'zerok-make-script-executable)
+#+END_SRC
+** Remove blank lines
+http://www.emacswiki.org/emacs/DeletingWhitespace
+
+#+begin_src emacs-lisp
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+#+end_src
+* Locale
+** First day of the week
+Where I live we consider Monday to be the first day of the week, so I want my
+calendars to think so to:
+
+#+BEGIN_SRC emacs-lisp
+(setq calendar-week-start-day 1)
+#+END_SRC
+* Keybindings
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "M-1") 'delete-other-windows)
+(global-set-key (kbd "M-2") 'split-window-vertically)
+(global-set-key (kbd "M-3") 'split-window-horizontally)
+(global-set-key (kbd "C-o") 'other-window)
+(global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "C-x C-b") 'helm-buffers-list)
+(global-set-key (kbd "C-+") 'text-scale-increase)
+(global-set-key (kbd "C--") 'text-scale-decrease)
+(global-set-key (kbd "C-c l l") 'toggle-truncate-lines)
+(global-set-key (kbd "M-z") 'undo)
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-M-c") 'org-capture)
+(global-set-key (kbd "C-c C-x C-j") 'org-clock-goto)
+(global-set-key (kbd "C-c C-r") 'replace-string)
+(global-set-key (kbd "M-t") 'helm-cmd-t)
+(global-set-key (kbd "<f8>") 'neotree-toggle)
+(global-set-key (kbd "C-<f6>") 'magit-status)
+(global-set-key (kbd "C-c C-g") 'ace-jump-char-mode)
+(global-set-key (kbd "<f9>") 'ace-jump-char-mode)
+(global-set-key (kbd "M-e") 'er/expand-region)
+(global-set-key (kbd "C-c k") 'company-complete)
+(global-set-key (kbd "C-c C-<SPC>") 'point-to-register)
+(global-set-key (kbd "C-c C-j") 'jump-to-register)
+#+END_SRC
+
+From VIM I'm used to deleting words quiet easily no matter where
+in that word I currently am. This rebinds M-d to do just that
+instead of just deleting until the end of the current word.
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "M-d") 'delete-current-word)
+(defun delete-current-word ()
+  "This removes the current word no matter where in the word you are."
+  (interactive)
+  (if (not (bolp))
+      (and
+       (re-search-backward "\\W")
+       (forward-char)
+       )
+    )
+  (kill-word 1)
+  )
+#+END_SRC
+
+Some other helpers that try to emulate VIM behavior outside of evil-mode:
+
+#+BEGIN_SRC emacs-lisp
+;; http://stackoverflow.com/questions/23692879/emacs24-backtab-is-undefined-how-to-define-this-shortcut-key
+(global-set-key (kbd "<backtab>") 'un-indent-by-removing-4-spaces)
+(defun un-indent-by-removing-4-spaces ()
+  "remove 4 spaces from beginning of of line"
+  (interactive)
+  (save-excursion
+    (save-match-data
+      (beginning-of-line)
+      ;; get rid of tabs at beginning of line
+      (when (looking-at "^\\s-+")
+        (untabify (match-beginning 0) (match-end 0)))
+      (when (looking-at "^    ")
+        (replace-match "")))))
+
+;; Based on http://emacsredux.com/blog/2013/06/15/open-line-above/
+(global-set-key (kbd "C-S-<return>") 'newline-above)
+(defun newline-above ()
+  "Creates a new empty line above the current one"
+  (interactive)
+  (move-beginning-of-line nil)
+  (newline-and-indent)
+  (forward-line -1)
+  (indent-according-to-mode)
+  )
+;; A simple way to always create a new line wherever you are within the current line
+(global-set-key (kbd "S-<return>") 'smart-newline)
+(defun smart-newline ()
+  "Creates a newline below the current one no matter where in
+that line the user currenty is."
+  (interactive)
+  (move-end-of-line nil)
+  (newline-and-indent))
+
+(global-set-key (kbd "M-l") 'duplicate-line)
+(defun duplicate-line ()
+  "Duplicates the current lines below and moves the point there."
+  (interactive)
+  (let ((col (current-column)))
+    (save-excursion
+      (kill-whole-line 1)
+      (yank)
+      (yank)
+      )
+    (forward-line)
+    (move-to-column col)
+    )
+  )
+#+END_SRC
+** Commenting
+
+Override for M-; to actually comment out a line instead of adding a comment
+after it:
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "M-;") 'toggle-line-comment)
+(defun toggle-line-comment ()
+  "Toggles commenting of the current line or all lines in the current region"
+  (interactive)
+  (if (region-active-p)
+      (save-excursion
+        (let (
+              (end-of-region (region-end))
+              (start-of-region 0)
+              )
+          (goto-char (region-beginning))
+          (setq start-of-region (line-beginning-position))
+          (goto-char end-of-region)
+          (comment-or-uncomment-region start-of-region (line-end-position))
+          ))
+    (comment-or-uncomment-region (line-beginning-position) (line-end-position))))
+#+END_SRC
+
+* Basic typing
+
+** Automatic closing braces
+
+Since version 24 Emacs comes with the electric-pair mode which supports creating
+things like closing braces, quotes etc.
+
+#+begin_src emacs-lisp
+(electric-pair-mode 1)
+#+end_src
+
+* Major modes
+** Markdown
+
+I was really stupid and started using Markdown years ago with the wrong file
+extension, so now I have to asign "*.mdown" extensions to Markdown in whatever
+editor I use ...
+
+#+begin_src emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.mdown\\'" . markdown-mode))
+#+end_src
+*** Encoding and Decoding
+
+For some reason Emacs doesn't come out of the box with helpers for encoding and
+decoding HTML entities, which is annoying when you work with Markdown.
+
+So I needed my own ones:
+
+#+begin_src emacs-lisp
+  (defun zs-html-encode ()
+    "Escape relevant characters as HTML entities in this region"
+    (interactive)
+    (save-excursion
+      (narrow-to-region (region-beginning) (region-end))
+      (let (element
+            (escapings '(
+                         ("&" "&amp;")
+                         ("<" "&lt;")
+                         (">" "&gt;")
+                         )))
+        (dolist (element escapings)
+          (goto-char (point-min))
+          (replace-string (car element) (car (cdr element)))
+          )
+        )
+      (widen)
+    )
+  )
+#+end_src
+
+*** Disable auto-compilation
+
+#+begin_src emacs-lisp
+(setq scss-compile-at-save nil)
+#+end_src
+
+*** Reference handling
+
+By default markdown-mode will add references after the current
+paragraph/section. Personally, I prefer them to be put at the end of the file to
+feel more similar to things like footnotes:
+
+#+BEGIN_SRC emacs=lisp
+(setq markdown-reference-location 'end)
+#+END_SRC
+
+** JavaScript
+** Python
+** Sass/SCSS
+** HTML
+
+By default SGML documents have a indentation of 2 characters. Seems like you
+can't use global settings here but have to override that SGML-internal variable:
+
+#+begin_src emacs-lisp
+(setq sgml-basic-offset 4)
+#+end_src
+** Restructured Text (rst)
+
+It is rather tiring to underline headlines manually. This little helper allows
+me to just enter one character of the pattern below a line and complete it to
+the lenght of the line above it with C-c C-c.
+
+#+begin_src emacs-lisp
+(require 'rst)
+(defun zs-rst-complete-heading ()
+  "zs-rst-complete-headline completes the headline indicator for the length of the headline"
+  (interactive)
+  (let (
+        (length-to-end 0)
+        (start-point 0)
+        (headline-char (char-before))
+        )
+    (save-excursion
+      (previous-line)
+      (setq start-point (point))
+      (move-end-of-line nil)
+      (setq length-to-end (- (point) start-point))
+      )
+    (insert (make-string length-to-end headline-char))
+    )
+  )
+
+(define-key rst-mode-map "\C-c\C-c" 'zs-rst-complete-heading)
+#+end_src
+* OrgMode
+** Daily Standup Report
+I tend to forget what I was working on the previous day so I want to easily be
+able to generate a report of all the items I've booked time on the day before:
+
+#+BEGIN_SRC emacs-lisp
+(defun zs-is-weekday-p (date)
+  "Checks if a given date object represents a weekday."
+  (let ((daterepr (format-time-string "%w" date)))
+    (member daterepr (list "1" "2" "3" "4" "5"))
+    ))
+
+(defun zs-get-previous-workday ()
+  "Returns the date object for the previous workday"
+  (let ((start (time-subtract (current-time) (seconds-to-time 86400))))
+    (while (not (zs-is-weekday-p start))
+      (setq start (time-subtract start (seconds-to-time 86400)))
+      )
+    (format-time-string "%Y-%m-%d" start)
+    )
+  )
+
+(defun zs-prepare-standup-report ()
+  "This updates my table on yesterdays bookings and exports it to HTML."
+  (interactive)
+  (save-excursion
+    (let (
+          (date (zs-get-previous-workday))
+          )
+      (find-file "~/org/yesterdays-bookings.org")
+      (goto-char (point-min))
+      (replace-regexp ":block [[:digit:]]\\{4\\}-[[:digit:]]\\{2\\}-[[:digit:]]\\{2\\}"
+                      (format ":block %s" date)
+                      nil 0 (point-max) nil)
+      (org-ctrl-c-ctrl-c)
+      (save-buffer)
+      (org-html-export-to-html)
+      (kill-buffer)
+      )
+    )
+  )
+
+#+END_SRC
+** Navigating sections
+Navigating between sections in a document was never easier :-)
+
+#+begin_src emacs-lisp
+(add-hook 'org-mode-hook (lambda()
+                           (require 'helm-org)
+                           (global-set-key (kbd "C-c o h") 'helm-org-in-buffer-headings)
+                           ))
+#+end_src
+
+** Other stuff
+
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-custom-commands
+      '(("h" "Tasks in the home context"
+         ((agenda "" (
+                      (org-agenda-start-day "-1d")
+                      (org-agenda-start-on-weekday nil)
+                      (org-agenda-entry-types '(:deadline :scheduled))
+                      (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "WAITING" "CANCELLED")))
+                      ))
+          (tags-todo "@home-TODO=\"WAITING\"-TODO=\"DONE\"-TODO=\"CANCELLED\"" (
+                                                                                (org-agenda-todo-ignore-scheduled 'future)
+                                                                                (org-agenda-tags-todo-honor-ignore-options t)
+                                                                                ))
+          ))
+        ("i" "Inbox"
+         ((tags-todo "CATEGORY=\"inbox\"")))
+        ("w" "Tasks in the work context"
+         ((agenda "" (
+                      (org-agenda-entry-types '(:deadline :scheduled))
+                      (org-agenda-start-day "-1d")
+                      (org-agenda-start-on-weekday nil)
+                      (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "WAITING" "CANCELLED")))
+                      ))
+          (tags-todo "@work-TODO=\"WAITING\"-TODO=\"DONE\"-TODO=\"CANCELLED\"")))
+        ("r" "Tasks for review"
+         ((tags-todo "TODO=\"WAITING\"")))
+        )
+      )
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "STARTED(s)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)"))
+      )
+(setq org-tag-alist '(("@work" . ?w) ("@home" . ?h)))
+(setq org-log-done 'time)
+
+(defun zs-get-current-journal-file ()
+  "This returns the journal file that should be used for today."
+  (format-time-string "~/org/journal/%Y/%Y-%m-%d.org")
+  )
+
+(defun zs-get-previous-journal-file ()
+  "Returns the path to the journal file of the previous day."
+  (format-time-string "~/org/journal/%Y/%Y-%m-%d.org" (time-subtract (current-time) (seconds-to-time 86400)))
+  )
+
+(defun journal-today ()
+  "Opens the current journal file"
+  (interactive)
+  (find-file (zs-get-current-journal-file)))
+
+(defun journal-yesterday ()
+  "Opens the journal file of the previous day"
+  (interactive)
+  (find-file (zs-get-previous-journal-file))
+  )
+
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Inbox")
+         "* TODO %?\n  :PROPERTIES:\n  :CREATED: %T\n  :END:\n")
+        ("s" "Someday" entry (file "~/org/someday.org")
+         "* %?\n  :PROPERTIES:\n  :CREATED: %T\n  :END:\n")
+        ("r" "To Read" entry (file "~/org/toread.org")
+         "* TODO %?  :@home:\n  :PROPERTIES:\n  :CREATED: %T\n  :END:\n")
+        ("j" "Journal" entry (file (zs-get-current-journal-file))
+         "* %?\n\n  CREATED: %T"
+         :empty-lines 1)
+        ))
+(setq org-agenda-files '("~/org" "~/org/travel"))
+(setq org-enforce-todo-dependencies t)
+(setq org-clock-into-drawer 1)
+(setq org-log-into-drawer t)
+(setq org-refile-targets '((nil . (:level . 1)) (nil . (:level . 2)) ))
+#+END_SRC
