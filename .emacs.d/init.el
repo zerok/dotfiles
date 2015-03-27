@@ -57,8 +57,6 @@
 (add-hook 'after-init-hook 'global-company-mode) ;; auto completion
 (windmove-default-keybindings) ;; better window navigation
 
-(projectile-global-mode) ;; Enable projectile everywhere
-
 ;; https://github.com/topfunky/PeepOpen-Issues/issues/13
 (setq ns-pop-up-frames nil)
 

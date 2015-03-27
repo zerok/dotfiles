@@ -517,3 +517,10 @@ Navigating between sections in a document was never easier :-)
 (setq org-log-into-drawer t)
 (setq org-refile-targets '((nil . (:level . 1)) (nil . (:level . 2)) ))
 #+END_SRC
+* Project management
+
+Enable projectile everywhere:
+
+#+BEGIN_SRC emacs-lisp
+(projectile-global-mode)
+#+END_SRC
