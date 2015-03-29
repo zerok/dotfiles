@@ -71,10 +71,29 @@ export ANDROID_HOME=/usr/local/opt/android-sdk
 # dependencies, I deal with that using Godeps.
 #
 export GOPATH=/Users/zerok/go
-export PATH=$GOPATH/bin:/usr/local/Cellar/go/1.3.3/libexec/bin:$PATH
+export PATH=$GOPATH/bin:/usr/local/Cellar/go/1.4.1/libexec/bin:$PATH
 
 
 ################################################################################
 # Private settings
 #
 source ~/.zshrc.private
+
+################################################################################
+# Task Warrior
+alias h='task next +@home +UNBLOCKED'
+alias w='task next +@work +UNBLOCKED'
+alias t='task'
+
+################################################################################
+# GPG
+# eval "$(gpg-agent --daemon)"
+source ~/.gpg-agent-info
+export GPG_AGENT_INFO
+
+export EDITOR=em
+
+export NVM_DIR=~/.nvm
+source $(brew --prefix nvm)/nvm.sh
+
+source /Users/zerok/.rvm/scripts/rvm
