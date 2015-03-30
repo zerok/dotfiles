@@ -8,7 +8,30 @@
              '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
 ;; Make sure that all the required packages are installed
-(dolist (package '(ag company company-go flx flx-ido flycheck go-mode haskell-mode helm helm-anything helm-cmd-t js2-mode jsx-mode magit markdown-mode neotree org projectile scss-mode smyx-theme tern yaml-mode evil))
+(dolist (package '(ag
+                   company
+                   company-go
+                   flx
+                   flx-ido
+                   flycheck
+                   go-mode
+                   haskell-mode
+                   helm
+                   helm-anything
+                   helm-cmd-t
+                   htmlize
+                   js2-mode
+                   jsx-mode
+                   magit
+                   markdown-mode
+                   neotree
+                   org
+                   projectile
+                   scss-mode
+                   smyx-theme
+                   tern
+                   yaml-mode
+                   evil))
   (when (not (package-installed-p package))
     (package-install package)
     )
