@@ -524,3 +524,20 @@ Enable projectile everywhere:
 #+BEGIN_SRC emacs-lisp
 (projectile-global-mode)
 #+END_SRC
+* EvilMode
+** Leader hotkeys
+
+Probably the single best thing about keybindings in VIM is that you by default
+have a namespace for them thanks to the leader-key. It was only a matter of time
+before I added evil-leader to my Emacs configuration and remapped some of my
+most commonly used shortcuts:
+
+#+BEGIN_SRC emacs-lisp
+(global-evil-leader-mode)
+(evil-leader/set-leader "\\")
+(evil-leader/set-key
+    "t" 'helm-cmd-t
+    "b" 'helm-buffers-list
+    "gs" 'magit-status
+    )
+#+END_SRC
