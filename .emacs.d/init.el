@@ -31,7 +31,9 @@
                    smyx-theme
                    tern
                    yaml-mode
-                   evil))
+                   evil
+                   evil-leader
+                   evil-commentary))
   (when (not (package-installed-p package))
     (package-install package)
     )

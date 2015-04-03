@@ -445,6 +445,12 @@ Navigating between sections in a document was never easier :-)
 
 ** Other stuff
 
+When using export make sure to always use UTF-8:
+
+#+BEGIN_SRC emacs-lisp
+(setq org-export-coding-system 'utf-8)
+#+END_SRC
+
 #+BEGIN_SRC emacs-lisp
 (setq org-agenda-custom-commands
       '(("h" "Tasks in the home context"
@@ -458,9 +464,9 @@ Navigating between sections in a document was never easier :-)
                                                                                 (org-agenda-todo-ignore-scheduled 'future)
                                                                                 (org-agenda-tags-todo-honor-ignore-options t)
                                                                                 ))
-          ))
+          ) nil ("~/org/home.html"))
         ("i" "Inbox"
-         ((tags-todo "CATEGORY=\"inbox\"")))
+         ((tags-todo "CATEGORY=\"inbox\"")) nil ("~/org/inbox.html"))
         ("w" "Tasks in the work context"
          ((agenda "" (
                       (org-agenda-entry-types '(:deadline :scheduled))
@@ -468,7 +474,7 @@ Navigating between sections in a document was never easier :-)
                       (org-agenda-start-on-weekday nil)
                       (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "WAITING" "CANCELLED")))
                       ))
-          (tags-todo "@work-TODO=\"WAITING\"-TODO=\"DONE\"-TODO=\"CANCELLED\"")))
+          (tags-todo "@work-TODO=\"WAITING\"-TODO=\"DONE\"-TODO=\"CANCELLED\"")) nil ("~/org/work.html"))
         ("r" "Tasks for review"
          ((tags-todo "TODO=\"WAITING\"")))
         )
@@ -540,4 +546,13 @@ most commonly used shortcuts:
     "b" 'helm-buffers-list
     "gs" 'magit-status
     )
+#+END_SRC
+** evil-commentary
+
+I've use Tim Pope's awesome [[https://github.com/linktohack/evil-commentary][vim-commentary]] extension for so many years that it
+has become really hard to get it out of my system. But why should I when there
+is [[https://github.com/linktohack/evil-commentary][evil-commentary]] out there :-D
+
+#+BEGIN_SRC emacs-lisp
+(evil-commentary-mode)
 #+END_SRC
