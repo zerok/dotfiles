@@ -1,3 +1,5 @@
+#+TITLE: zerok's Emacs configuration
+#+OPTIONS: toc:2
 * General Emacs settings
 ** Theme
 #+begin_src emacs-lisp
