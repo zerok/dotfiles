@@ -163,6 +163,7 @@ calendars to think so to:
 (global-set-key (kbd "C-c k") 'company-complete)
 (global-set-key (kbd "C-c C-<SPC>") 'point-to-register)
 (global-set-key (kbd "C-c C-j") 'jump-to-register)
+(global-set-key (kbd "C-j") 'emmet-expand-line)
 #+END_SRC
 
 From VIM I'm used to deleting words quiet easily no matter where
