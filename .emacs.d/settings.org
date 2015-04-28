@@ -534,6 +534,16 @@ Enable projectile everywhere:
 (projectile-global-mode)
 #+END_SRC
 * EvilMode
+** Disable evil-mode in specific situations
+
+As much as I like evil-mode, I don't want it active where it gets in the way
+with some other major or special modes like neotree et al. until I've found
+some good ways to integrate it better there:
+
+#+BEGIN_SRC emacs-lisp
+(evil-set-initial-state 'neotree-mode 'emacs)
+#+END_SRC
+
 ** Leader hotkeys
 
 Probably the single best thing about keybindings in VIM is that you by default
@@ -547,6 +557,7 @@ most commonly used shortcuts:
 (evil-leader/set-key
     "t" 'helm-cmd-t
     "b" 'helm-buffers-list
+    "k" 'kill-buffer
     "gs" 'magit-status
     )
 #+END_SRC
