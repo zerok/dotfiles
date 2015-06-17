@@ -13,9 +13,21 @@ combine that with the awesome development environment that Emacs+LISP is: All
 the better!
 
 #+begin_src emacs-lisp
-(setq evil-want-C-u-scroll t)
 (require 'evil)
 (evil-mode 1)
+#+end_src
+
+In order still to be able to use C-u, I've remapped page-up and page-down to C-k
+and C-j as described on
+http://juanjoalvarez.net/es/detail/2014/sep/19/vim-emacsevil-chaotic-migration-guide/ .
+
+#+begin_src emacs-lisp
+(define-key evil-normal-state-map (kbd "C-k") (lambda ()
+                    (interactive)
+                    (evil-scroll-up nil)))
+(define-key evil-normal-state-map (kbd "C-j") (lambda ()
+                        (interactive)
+                        (evil-scroll-down nil)))
 #+end_src
 
 ** Simple confirmation
