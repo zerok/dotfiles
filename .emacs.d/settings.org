@@ -1,9 +1,20 @@
 #+TITLE: zerok's Emacs configuration
 #+OPTIONS: toc:2
 * General Emacs settings
+** Unicode fonts
+#+BEGIN_SRC emacs-lisp
+(set-fontset-font t 'unicode "Symbola" nil 'prepend)
+(require 'unicode-fonts)
+(unicode-fonts-setup)
+#+END_SRC
 ** Theme
 #+begin_src emacs-lisp
-(load-theme 'smyx t)
+;(load-theme 'smyx t)
+(require 'moe-theme)
+(load-theme 'moe-dark t)
+(require 'powerline)
+(require 'powerline-evil)
+(powerline-moe-theme)
 #+end_src
 ** Enable evil mode
 
@@ -13,7 +24,6 @@ combine that with the awesome development environment that Emacs+LISP is: All
 the better!
 
 #+begin_src emacs-lisp
-(require 'evil)
 (evil-mode 1)
 #+end_src
 
@@ -40,7 +50,10 @@ should really suffice...
 #+end_src
 
 ** OSX Integration
-
+#+BEGIN_SRC emacs-lisp
+(when (memq window-system '(mac ns))
+  (exec-path-from-shell-initialize))
+#+END_SRC
 ** Indentation & line width
 #+begin_src emacs-lisp
 (setq-default fill-column 80)
@@ -142,6 +155,29 @@ http://www.emacswiki.org/emacs/DeletingWhitespace
 #+begin_src emacs-lisp
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 #+end_src
+** Enable auto-completion globally
+#+BEGIN_SRC emacs-lisp
+(setq company-dabbrev-downcase nil)
+(global-company-mode 1)
+#+END_SRC
+** Show matching parens
+#+BEGIN_SRC emacs-lisp
+;; http://emacswiki.org/emacs/ShowParenMode
+(show-paren-mode 1)
+#+END_SRC
+** Re-enable restricted functions
+#+BEGIN_SRC emacs-lisp
+(put 'narrow-to-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
+#+END_SRC
+** Code checking
+#+BEGIN_SRC
+(add-hook 'after-init-hook #'global-flycheck-mode) ;; static code checking
+#+END_SRC
+** Custom mode mapping
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.zshrc\\.(local|private)\\'". sh-mode))
+#+END_SRC
 * Locale
 ** First day of the week
 Where I live we consider Monday to be the first day of the week, so I want my
@@ -152,6 +188,7 @@ calendars to think so to:
 #+END_SRC
 * Keybindings
 #+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "M-i") 'helm-imenu)
 (global-set-key (kbd "M-1") 'delete-other-windows)
 (global-set-key (kbd "M-2") 'split-window-vertically)
 (global-set-key (kbd "M-3") 'split-window-horizontally)
@@ -211,7 +248,7 @@ Some other helpers that try to emulate VIM behavior outside of evil-mode:
       ;; get rid of tabs at beginning of line
       (when (looking-at "^\\s-+")
         (untabify (match-beginning 0) (match-end 0)))
-      (when (looking-at "^    ")
+      (when (looking-at (concat "^" (make-string tab-width 32)))
         (replace-match "")))))
 
 ;; Based on http://emacsredux.com/blog/2013/06/15/open-line-above/
@@ -368,6 +405,11 @@ doesn't use JSCS ...
 #+END_SRC
 
 ** Python
+*** Completion with JEDI
+#+BEGIN_SRC emacs-lisp
+(add-hook 'python-mode-hook 'jedi:setup)
+(setq jedi:complete-on-dot t)
+#+END_SRC
 ** Sass/SCSS
 ** HTML
 
@@ -405,6 +447,63 @@ the lenght of the line above it with C-c C-c.
 
 (define-key rst-mode-map "\C-c\C-c" 'zs-rst-complete-heading)
 #+end_src
+** Rust
+#+BEGIN_SRC emacs-lisp
+(eval-after-load 'flycheck
+  '(add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+#+END_SRC
+** Elixir
+#+BEGIN_SRC emacs-lisp
+(setq elixir-compiler-command  "/usr/local/bin/elixirc")
+(setq alchemist-mix-command "/usr/local/bin/mix")
+(setq alchemist-iex-program-name "/usr/local/bin/iex")
+(setq alchemist-execute-command "/usr/local/bin/elixir")
+(setq alchemist-compile-command "/usr/local/bin/elixirc")
+#+END_SRC
+** Golang
+#+BEGIN_SRC emacs-lisp
+(setq gofmt-command "goimports")
+(add-hook 'before-save-hook 'gofmt-before-save)
+(add-hook 'go-mode-hook (lambda ()
+                          (set (make-local-variable 'company-backends) '(company-go))
+                          (company-mode)))
+#+END_SRC
+*** Support for GB projects
+#+BEGIN_SRC emacs-lisp
+(defun zerok/setup-gb-gopath ()
+  (interactive)
+  (make-local-variable 'process-environment)
+  (let (
+        (srcPath (_zerok/get-gb-src-folder buffer-file-name))
+        )
+    (when srcPath
+      (let* (
+            (projectPath (string-remove-suffix "/" (file-name-directory srcPath)))
+            (vendorPath (string-remove-suffix "/" (concat projectPath "/vendor")))
+            (gopath (concat vendorPath ":" projectPath))
+            )
+        (progn
+          (message "Updating GOPATH to %s" gopath)
+          (setenv "GOPATH" gopath)
+          )
+        ))))
+(add-hook 'go-mode-hook 'zerok/setup-gb-gopath)
+
+(defun _zerok/get-gb-src-folder (path)
+  (let (
+        (parent (directory-file-name (file-name-directory path)))
+        (basename (file-name-nondirectory path))
+        )
+    (if (equal "src" basename)
+        (string-remove-suffix "/" path)
+      (if (equal "/" parent)
+          nil
+        (_zerok/get-gb-src-folder parent)
+        )
+      )
+    )
+  )
+#+END_SRC
 * OrgMode
 ** Daily Standup Report
 I tend to forget what I was working on the previous day so I want to easily be
@@ -554,6 +653,9 @@ some good ways to integrate it better there:
 
 #+BEGIN_SRC emacs-lisp
 (evil-set-initial-state 'neotree-mode 'emacs)
+(evil-set-initial-state 'dired-mode 'emacs)
+(evil-set-initial-state 'shell-mode 'emacs)
+(evil-set-initial-state 'magit-popup-mode 'emacs)
 #+END_SRC
 
 ** Leader hotkeys
