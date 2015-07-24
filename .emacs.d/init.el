@@ -9,6 +9,7 @@
 ;; Make sure that all the required packages are installed
 (dolist (package '(
 		           ag
+                   avy
                    alchemist
                    company
                    company-go

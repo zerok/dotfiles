@@ -206,8 +206,7 @@ calendars to think so to:
 (global-set-key (kbd "M-t") 'helm-cmd-t)
 (global-set-key (kbd "<f8>") 'neotree-toggle)
 (global-set-key (kbd "C-<f6>") 'magit-status)
-(global-set-key (kbd "C-c C-g") 'ace-jump-char-mode)
-(global-set-key (kbd "<f9>") 'ace-jump-char-mode)
+(global-set-key (kbd "<f9>") 'avy-goto-char)
 (global-set-key (kbd "M-e") 'er/expand-region)
 (global-set-key (kbd "C-c k") 'company-complete)
 (global-set-key (kbd "C-c C-<SPC>") 'point-to-register)
@@ -673,6 +672,7 @@ most commonly used shortcuts:
     "b" 'helm-buffers-list
     "k" 'kill-buffer
     "gs" 'magit-status
+    "\\" 'avy-goto-char
     )
 #+END_SRC
 ** evil-commentary
