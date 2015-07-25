@@ -600,12 +600,12 @@ When using export make sure to always use UTF-8:
 
 (defun zs-get-current-journal-file ()
   "This returns the journal file that should be used for today."
-  (format-time-string "~/org/journal/%Y/%Y-%m-%d.org")
+  (format-time-string "~/journal/%Y/%Y-%m-%d.org")
   )
 
 (defun zs-get-previous-journal-file ()
   "Returns the path to the journal file of the previous day."
-  (format-time-string "~/org/journal/%Y/%Y-%m-%d.org" (time-subtract (current-time) (seconds-to-time 86400)))
+  (format-time-string "~/journal/%Y/%Y-%m-%d.org" (time-subtract (current-time) (seconds-to-time 86400)))
   )
 
 (defun journal-today ()
