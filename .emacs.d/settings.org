@@ -503,6 +503,18 @@ the lenght of the line above it with C-c C-c.
     )
   )
 #+END_SRC
+** Webmode
+
+For JSX from https://truongtx.me/2014/03/10/emacs-setup-jsx-mode-and-jsx-syntax-checking/
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
+(defadvice web-mode-highlight-part (around tweak-jsx activate)
+  (if (equal web-mode-content-type "jsx")
+      (let ((web-mode-enable-part-face nil))
+        ad-do-it)
+    ad-do-it))
+#+END_SRC
 * OrgMode
 ** Daily Standup Report
 I tend to forget what I was working on the previous day so I want to easily be
@@ -565,39 +577,56 @@ When using export make sure to always use UTF-8:
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-custom-commands
-      '(("h" "Tasks in the home context"
-         ((agenda "" (
-                      (org-agenda-start-day "-1d")
-                      (org-agenda-start-on-weekday nil)
-                      (org-agenda-entry-types '(:deadline :scheduled))
-                      (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "WAITING" "CANCELLED")))
-                      ))
-          (tags-todo "@home-TODO=\"WAITING\"-TODO=\"DONE\"-TODO=\"CANCELLED\"" (
-                                                                                (org-agenda-todo-ignore-scheduled 'future)
-                                                                                (org-agenda-tags-todo-honor-ignore-options t)
-                                                                                ))
-          ) nil ("~/org/home.html"))
-        ("i" "Inbox"
-         ((tags-todo "CATEGORY=\"inbox\"")) nil ("~/org/inbox.html"))
-        ("w" "Tasks in the work context"
-         ((agenda "" (
-                      (org-agenda-entry-types '(:deadline :scheduled))
-                      (org-agenda-start-day "-1d")
-                      (org-agenda-start-on-weekday nil)
-                      (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "WAITING" "CANCELLED")))
-                      ))
-          (tags-todo "@work-TODO=\"WAITING\"-TODO=\"DONE\"-TODO=\"CANCELLED\"")) nil ("~/org/work.html"))
-        ("r" "Tasks for review"
-         ((tags-todo "TODO=\"WAITING\"")))
+  (setq org-agenda-custom-commands
+        '(("h" "Tasks in the home context"
+           ((agenda "" (
+                        (org-agenda-start-day "-1d")
+                        (org-agenda-start-on-weekday nil)
+                        (org-agenda-entry-types '(:deadline :scheduled))
+                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "WAITING" "CANCELLED")))
+                        ))
+            (tags-todo "@home-TODO=\"WAITING\"-TODO=\"DONE\"-TODO=\"CANCELLED\"" (
+                                                                                  (org-agenda-todo-ignore-scheduled 'future)
+                                                                                  (org-agenda-tags-todo-honor-ignore-options t)
+                                                                                  ))
+            ) nil ("~/org/home.html"))
+          ("i" "Inbox"
+           ((tags-todo "CATEGORY=\"inbox\"")) nil ("~/org/inbox.html"))
+          ("w" "Tasks in the work context"
+           ((agenda "" (
+                        (org-agenda-entry-types '(:deadline :scheduled))
+                        (org-agenda-start-day "-1d")
+                        (org-agenda-start-on-weekday nil)
+                        (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("DONE" "WAITING" "CANCELLED")))
+                        ))
+            (tags-todo "@work-TODO=\"WAITING\"-TODO=\"DONE\"-TODO=\"CANCELLED\"")) nil ("~/org/work.html"))
+          ("r" "Tasks for review"
+           ((tags-todo "TODO=\"WAITING\"")))
+          )
         )
-      )
-(setq org-todo-keywords
-      '((sequence "TODO(t)" "STARTED(s)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)"))
-      )
-(setq org-tag-alist '(("@work" . ?w) ("@home" . ?h)))
-(setq org-log-done 'time)
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "STARTED(s)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)"))
+        )
+  (setq org-tag-alist '(("@work" . ?w) ("@home" . ?h)))
+  (setq org-log-done 'time)
+  (setq org-agenda-files '("~/org" "~/org/travel"))
+  (setq org-enforce-todo-dependencies t)
+  (setq org-clock-into-drawer 1)
+  (setq org-log-into-drawer t)
+  (setq org-refile-targets '((nil . (:level . 1)) (nil . (:level . 2)) ))
+#+END_SRC
 
+** Capture templates
+
+I primarily use OrgMode to capture things like meeting notes and personal
+journal entries. As such the two primary capture templates are "n" for notes,
+which ends up as timestamped files in ~/notes, and "j" for journal entries saved
+into ~/journal.
+
+"t" (todo) I mostly keep for now in case I want to ever use OrgMode as GTD tool
+again. Probably nothing for the immediate feature but that option doesn't hurt.
+
+#+BEGIN_SRC emacs-lisp
 (defun zs-get-current-journal-file ()
   "This returns the journal file that should be used for today."
   (format-time-string "~/journal/%Y/%Y-%m-%d.org")
@@ -605,8 +634,7 @@ When using export make sure to always use UTF-8:
 
 (defun zs-get-previous-journal-file ()
   "Returns the path to the journal file of the previous day."
-  (format-time-string "~/journal/%Y/%Y-%m-%d.org" (time-subtract (current-time) (seconds-to-time 86400)))
-  )
+  (format-time-string "~/journal/%Y/%Y-%m-%d.org" (time-subtract (current-time) (seconds-to-time 86400))))
 
 (defun journal-today ()
   "Opens the current journal file"
@@ -616,25 +644,24 @@ When using export make sure to always use UTF-8:
 (defun journal-yesterday ()
   "Opens the journal file of the previous day"
   (interactive)
-  (find-file (zs-get-previous-journal-file))
-  )
+  (find-file (zs-get-previous-journal-file)))
+
+(defun zerok/capture-note-file ()
+  "Generate a new note file name based on user input and the current time"
+  (let ((name (read-string "Name: "))
+        (prefix (format-time-string "~/notes/%Y/%Y%m%d_%H%m")))
+    (format "%s-%s.org" prefix name)))
 
 (setq org-capture-templates
       '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Inbox")
          "* TODO %?\n  :PROPERTIES:\n  :CREATED: %T\n  :END:\n")
-        ("s" "Someday" entry (file "~/org/someday.org")
-         "* %?\n  :PROPERTIES:\n  :CREATED: %T\n  :END:\n")
-        ("r" "To Read" entry (file "~/org/toread.org")
-         "* TODO %?  :@home:\n  :PROPERTIES:\n  :CREATED: %T\n  :END:\n")
+        ("n" "Notes" plain (file zerok/capture-note-file)
+         "%?\n")
         ("j" "Journal" entry (file (zs-get-current-journal-file))
          "* %?\n\n  CREATED: %T"
          :empty-lines 1)
         ))
-(setq org-agenda-files '("~/org" "~/org/travel"))
-(setq org-enforce-todo-dependencies t)
-(setq org-clock-into-drawer 1)
-(setq org-log-into-drawer t)
-(setq org-refile-targets '((nil . (:level . 1)) (nil . (:level . 2)) ))
+
 #+END_SRC
 * Project management
 
