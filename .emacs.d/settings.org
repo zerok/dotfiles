@@ -214,24 +214,28 @@ calendars to think so to:
 (global-set-key (kbd "C-j") 'emmet-expand-line)
 #+END_SRC
 
-From VIM I'm used to deleting words quiet easily no matter where
-in that word I currently am. This rebinds M-d to do just that
-instead of just deleting until the end of the current word.
-
+** Emojis
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "M-d") 'delete-current-word)
-(defun delete-current-word ()
-  "This removes the current word no matter where in the word you are."
-  (interactive)
-  (if (not (bolp))
-      (and
-       (re-search-backward "\\W")
-       (forward-char)
-       )
-    )
-  (kill-word 1)
-  )
+(setq zerok/emoji-map (make-sparse-keymap))
+;; Smiling face with open mouth
+(define-key zerok/emoji-map
+  (kbd "1")
+  (lambda () (interactive) (insert-char #x1F603 1 t)))
+;; Winking
+(define-key zerok/emoji-map
+  (kbd "2")
+  (lambda () (interactive) (insert-char #x1F609 1 t)))
+;; Smiling face with smiling eyes
+(define-key zerok/emoji-map
+  (kbd "3")
+  (lambda () (interactive) (insert-char #x1F60A 1 t)))
+(define-key zerok/emoji-map
+  (kbd "4")
+  (lambda () (interactive) (insert "¯\\_(ツ)_/¯")))
+(global-set-key (kbd "C-M-o") zerok/emoji-map)
 #+END_SRC
+
+** Misc
 
 Some other helpers that try to emulate VIM behavior outside of evil-mode:
 
