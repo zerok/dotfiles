@@ -178,6 +178,15 @@ http://www.emacswiki.org/emacs/DeletingWhitespace
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'auto-mode-alist '("\\.zshrc\\.(local|private)\\'". sh-mode))
 #+END_SRC
+** NeoTree
+
+In NeoTree I prefer to have toggling automatically jump to the folder of the
+buffer I'm currently at:
+
+#+BEGIN_SRC emacs-lisp
+(setq neo-smart-open t)
+#+END_SRC
+
 * Locale
 ** First day of the week
 Where I live we consider Monday to be the first day of the week, so I want my
@@ -653,7 +662,7 @@ again. Probably nothing for the immediate feature but that option doesn't hurt.
 (defun zerok/capture-note-file ()
   "Generate a new note file name based on user input and the current time"
   (let ((name (read-string "Name: "))
-        (prefix (format-time-string "~/notes/%Y/%Y%m%d_%H%m")))
+        (prefix (format-time-string "~/notes/%Y/%Y%m%d_%H%M")))
     (format "%s-%s.org" prefix name)))
 
 (setq org-capture-templates
