@@ -388,6 +388,13 @@ feel more similar to things like footnotes:
 (setq markdown-reference-location 'end)
 #+END_SRC
 
+*** Preview
+#+BEGIN_SRC emacs-lisp
+(defun zerok/preview-markdown ()
+  "This opens Marked App to generate a preview of the given file"
+  (interactive)
+  (shell-command (format "open -a Marked\\ 2 %s" (buffer-file-name))))
+#+END_SRC
 ** JavaScript
 
 *** JSCS with Flycheck
