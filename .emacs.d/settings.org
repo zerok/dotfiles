@@ -485,6 +485,8 @@ the lenght of the line above it with C-c C-c.
 (add-hook 'before-save-hook 'gofmt-before-save)
 (add-hook 'go-mode-hook (lambda ()
                           (set (make-local-variable 'company-backends) '(company-go))
+                          (set (make-local-variable 'compilation-read-command) nil)
+                          (set (make-local-variable 'compile-command) "go vet && go build")
                           (company-mode)))
 #+END_SRC
 *** Support for GB projects
