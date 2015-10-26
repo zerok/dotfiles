@@ -1,50 +1,11 @@
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin:/Users/zerok/go/bin"))
+(setenv "SHELL" "/usr/local/bin/zsh")
 (setq exec-path (append exec-path '("/usr/local/bin" "/Users/zerok/go/bin")))
 (setenv "GOPATH" "/Users/zerok/go")
+(setq shell-file-name "/usr/local/bin/zsh")
 
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.org/packages/") t)
-(package-initialize)
-;; Make sure that all the required packages are installed
-(dolist (package '(
-		           ag
-                   avy
-                   alchemist
-                   company
-                   company-go
-                   elixir-mode
-                   flycheck
-                   flycheck-rust
-                   go-mode
-                   haskell-mode
-                   helm
-                   helm-anything
-                   helm-cmd-t
-                   htmlize
-                   js2-mode
-                   jsx-mode
-                   rust-mode
-                   magit
-                   markdown-mode
-                   neotree
-                   org
-                   projectile
-                   jedi
-                   company-jedi
-                   scss-mode
-                   smyx-theme
-                   tern
-                   yaml-mode
-                   unicode-fonts
-                   evil
-                   evil-leader
-                   evil-commentary
-                   ))
-  (when (not (package-installed-p package))
-    (package-install package)
-    )
-  )
+(require 'cask "/usr/local/share/emacs/site-lisp/cask/cask.el")
+(cask-initialize)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
