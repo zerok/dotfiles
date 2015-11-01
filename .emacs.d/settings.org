@@ -720,6 +720,28 @@ the very top:
                        :fuzzy-match t)
             :buffer "*helm notes*")))
 #+END_SRC
+** HTML Export
+
+I wasn't really happy with the default CSS used for the generated HTML files so
+I was looking for a way to include my own definitions. I still want that style
+to be include inline in the generated HTML file so that I can simply drop the
+document onto Dropbox and not worry about reachable links.
+
+Sadly, =org-html-head= can only be set to a string and not to a function
+generating a string, so simply reading a CSS file from somewhere and adding its
+content to every generated HTML file got a bit more complicated:
+
+#+BEGIN_SRC emacs-lisp
+(setq org-html-head-include-default-style nil)
+(defun zerok/generate-org-style (backend)
+  ""
+  (let ((stylefile "~/.emacs.d/org-style.css"))
+    (when (and (file-exists-p stylefile) (file-readable-p stylefile))
+      (with-temp-buffer
+        (insert-file-contents stylefile)
+        (setq org-html-head (concat "<style>" (buffer-string) "</style>"))))))
+(add-hook 'org-export-before-processing-hook 'zerok/generate-org-style)
+#+END_SRC
 * Project management
 
 Enable projectile everywhere:

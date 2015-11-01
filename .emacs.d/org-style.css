@@ -1,0 +1,43 @@
+/**
+ * This is a basic stylesheet intended as a replacement for orgmode's default
+ * one.
+ **/
+* {
+    font-family: "Georgia";
+}
+
+h1, h2, h3, h4, h5, h6,
+h1 span, h2 span, h3 span, h4 span, h5 span, h6 span,
+h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+    font-family: "Arial";
+}
+
+pre {
+    font-family: Monaco, "Courier New", Courier;
+}
+
+#content {
+    max-width: 800px;
+    line-height: 1.5em;
+    margin: auto;
+}
+
+dt {
+    font-weight: bold;
+}
+.timestamp {
+    font-style: italic;
+}
+
+#postamble {
+    margin-top: 1em;
+    border-top: 1px solid #666;
+    padding-top: 1em;
+    text-align: center;
+    font-size: 90%;
+    color: #666;
+}
+
+#postamble p {
+    margin: 0px;
+}
