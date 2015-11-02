@@ -396,7 +396,21 @@ feel more similar to things like footnotes:
   (shell-command (format "open -a Marked\\ 2 %s" (buffer-file-name))))
 #+END_SRC
 ** JavaScript
+*** JSONLinting
+Not much to compile for JSON files so I thought I'd simply hook jsonlinting into
+the compile command:
 
+#+BEGIN_SRC emacs-lisp
+(defun zerok/compile-json-setup ()
+  "For JSON files I'd like the compile command to execute jsonlint by default"
+  (when (and (not (string-empty-p buffer-file-name)) (string-suffix-p ".json" buffer-file-name))
+    (set (make-local-variable 'compilation-read-command)
+         nil)
+    (set (make-local-variable 'compile-command)
+         (concat "jsonlint -q " (shell-quote-argument buffer-file-name)))))
+
+(add-hook 'js-mode-hook 'zerok/compile-json-setup)
+#+END_SRC
 *** JSCS with Flycheck
 
 Right now I don't use JSCS anymore in favor of ESLint, but this would add a
