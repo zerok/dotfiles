@@ -734,6 +734,20 @@ the very top:
                        :fuzzy-match t)
             :buffer "*helm notes*")))
 #+END_SRC
+** Auto-Export Dropbox notes
+I put notes that I might share with other people or that I want to have
+available on the go in Dropbox. As the official Dropbox client doesn't really
+support .org files these should be exported automatically to HTML whenever I
+change them.
+
+#+BEGIN_SRC emacs-lisp
+(defun zerok/org-autoexport-dropbox ()
+  "Automatically generates a HTML export of the current orgmode file if it is stored in Dropbox"
+  (when (and buffer-file-name (string-match-p "/Dropbox/.*.org" buffer-file-name))
+    (org-html-export-to-html)))
+
+(add-hook 'after-save-hook 'zerok/org-autoexport-dropbox)
+#+END_SRC
 ** HTML Export
 
 I wasn't really happy with the default CSS used for the generated HTML files so
