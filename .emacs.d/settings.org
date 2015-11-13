@@ -492,16 +492,27 @@ the lenght of the line above it with C-c C-c.
 (setq alchemist-iex-program-name "/usr/local/bin/iex")
 (setq alchemist-execute-command "/usr/local/bin/elixir")
 (setq alchemist-compile-command "/usr/local/bin/elixirc")
+(defun zerok/elixir-mode-tabwidth-setup ()
+  ""
+  (setq tab-width 2))
+(add-hook 'elixir-mode-hook 'zerok/elixir-mode-tabwidth-setup)
 #+END_SRC
 ** Golang
+First, let's set up the basic system including compilation and company support:
+
 #+BEGIN_SRC emacs-lisp
-(setq gofmt-command "goimports")
-(add-hook 'before-save-hook 'gofmt-before-save)
-(add-hook 'go-mode-hook (lambda ()
-                          (set (make-local-variable 'company-backends) '(company-go))
-                          (set (make-local-variable 'compilation-read-command) nil)
-                          (set (make-local-variable 'compile-command) "go vet && go build")
-                          (company-mode)))
+  (setq gofmt-command "goimports")
+  (add-hook 'before-save-hook 'gofmt-before-save)
+  (defun zerok/go-mode-compilation-setup ()
+    "Configures the compilation command for go mode"
+    (set (make-local-variable 'compilation-read-command) nil)
+    (set (make-local-variable 'compile-command) "go vet && go build"))
+  (defun zerok/go-mode-enable-company ()
+    "Enable company-go in go-mode"
+    (set (make-local-variable 'company-backends) '(company-go))
+    (company-mode))
+  (add-hook 'go-mode-hook 'zerok/go-mode-compilation-setup)
+  (add-hook 'go-mode-hook 'zerok/go-mode-enable-company)
 #+END_SRC
 *** Support for GB projects
 #+BEGIN_SRC emacs-lisp
