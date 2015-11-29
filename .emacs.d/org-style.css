@@ -41,3 +41,7 @@ dt {
 #postamble p {
     margin: 0px;
 }
+
+img {
+    max-width: 100%;
+}

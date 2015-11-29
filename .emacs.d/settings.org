@@ -1,6 +1,15 @@
 #+TITLE: zerok's Emacs configuration
 #+OPTIONS: toc:2
 * General Emacs settings
+** Snippets
+
+Not much to add here. Snippets are simply a great thing to work with:
+
+#+BEGIN_SRC emacs-lisp
+(require 'yasnippet)
+(yas-global-mode 1)
+#+END_SRC
+
 ** Unicode fonts
 #+BEGIN_SRC emacs-lisp
 (set-fontset-font t 'unicode "Symbola" nil 'prepend)
@@ -59,7 +68,8 @@ should really suffice...
 (setq-default fill-column 80)
 (setq-default indent-tabs-mode nil) ;; don't use tabs
 (setq-default tab-width 4)
-(setq indent-line-function 'insert-tab)
+;(setq indent-line-function 'insert-tab)
+(indent-guide-global-mode)
 #+end_src
 
 And disable auto-fill-mode by default as it tends to get in the way. I just
@@ -221,8 +231,19 @@ calendars to think so to:
 (global-set-key (kbd "C-c C-<SPC>") 'point-to-register)
 (global-set-key (kbd "C-c C-j") 'jump-to-register)
 (global-set-key (kbd "C-j") 'emmet-expand-line)
+(global-set-key (kbd "C-s") 'swiper)
 #+END_SRC
 
+For some things it makes sense not to loose the prefix. Text-zooming is the
+first example you learn about when looking at the hydra website and it's a good
+one 😉
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-zoom (global-map "<f2>")
+  "zoom"
+  ("k" text-scale-increase "in")
+  ("j" text-scale-decrease "out"))
+#+END_SRC
 ** Emojis
 #+BEGIN_SRC emacs-lisp
 (setq zerok/emoji-map (make-sparse-keymap))
@@ -396,6 +417,29 @@ feel more similar to things like footnotes:
   (shell-command (format "open -a Marked\\ 2 %s" (buffer-file-name))))
 #+END_SRC
 ** JavaScript
+
+I really prefer js2-mode over js-mode 😉
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist (cons (rx ".js" eos) 'js2-mode))
+#+END_SRC
+
+For working with React it helps if imenu is working properly with it's internal
+object structure:
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'js2-mode-hook 'js2-imenu-extras-mode)
+#+END_SRC
+
+Indenting esp. for consts is a bit weird. Some projects like the next line (in a
+combined declaration) to be at the 6th column while others prefer it to continue
+with the default indentation (e.g. 4). To make rotating here easier, js2-mode
+offers a nice setting:
+
+#+BEGIN_SRC emacs-lisp
+(setq js2-bounce-indent-p t)
+#+END_SRC
+
 *** JSONLinting
 Not much to compile for JSON files so I thought I'd simply hook jsonlinting into
 the compile command:
@@ -435,6 +479,19 @@ doesn't use JSCS ...
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'auto-mode-alist '("\\.jsx\\'" . jsx-mode))
 (autoload 'jsx-mode "jsx-mode" "JSX mode" t)
+#+END_SRC
+
+*** Webmode
+
+For JSX from https://truongtx.me/2014/03/10/emacs-setup-jsx-mode-and-jsx-syntax-checking/
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.jsx$" . web-mode))
+(defadvice web-mode-highlight-part (around tweak-jsx activate)
+  (if (equal web-mode-content-type "jsx")
+      (let ((web-mode-enable-part-face nil))
+        ad-do-it)
+    ad-do-it))
 #+END_SRC
 
 ** Python
@@ -550,17 +607,25 @@ First, let's set up the basic system including compilation and company support:
     )
   )
 #+END_SRC
-** Webmode
+** YAML
 
-For JSX from https://truongtx.me/2014/03/10/emacs-setup-jsx-mode-and-jsx-syntax-checking/
+   RAML is also only just a special YAML file:
+
+   #+BEGIN_SRC emacs-lisp
+   (add-to-list 'auto-mode-alist '("\\.raml\\'" . yaml-mode))
+   #+END_SRC
+
+** Clojure
+
+Highlight-parentheses-mode is immensely useful when you're deep down in nested
+parens:
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
-(defadvice web-mode-highlight-part (around tweak-jsx activate)
-  (if (equal web-mode-content-type "jsx")
-      (let ((web-mode-enable-part-face nil))
-        ad-do-it)
-    ad-do-it))
+  (require 'highlight-parentheses)
+  (defun zerok/clojure-hook-highlight-parens-mode ()
+    "Enable highlight-parenthesis-mode when entering clojure mode"
+    (highlight-parentheses-mode t))
+  (add-hook 'clojure-mode-hook 'zerok/clojure-hook-highlight-parens-mode)
 #+END_SRC
 * OrgMode
 ** Daily Standup Report
@@ -817,6 +882,8 @@ most commonly used shortcuts:
     "b" 'helm-buffers-list
     "k" 'kill-buffer
     "gs" 'magit-status
+    "c" 'compile
+    "n" 'next-error
     "\\" 'avy-goto-char
     )
 #+END_SRC

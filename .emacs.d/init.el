@@ -42,6 +42,7 @@
 ;; (setq default-buffer-file-coding-system 'utf-8-unix)
 
 (require 'org)
+(load-file "~/.emacs.d/gorename.el")
 (load-file "~/.emacs.d/private.el")
 (org-babel-load-file "~/.emacs.d/settings.org")
 (add-hook 'after-init-hook 'global-company-mode)
