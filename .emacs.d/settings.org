@@ -497,8 +497,10 @@ For JSX from https://truongtx.me/2014/03/10/emacs-setup-jsx-mode-and-jsx-syntax-
 ** Python
 *** Completion with JEDI
 #+BEGIN_SRC emacs-lisp
-(add-hook 'python-mode-hook 'jedi:setup)
+(defun zerok/python-mode-jedi-hook ()
+  (add-to-list 'company-backends 'company-jedi))
 (setq jedi:complete-on-dot t)
+(add-hook 'python-mode-hook 'zerok/python-mode-jedi-hook)
 #+END_SRC
 ** Sass/SCSS
 ** HTML

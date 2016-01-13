@@ -1,8 +1,10 @@
 (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin:/Users/zerok/go/bin"))
 (setenv "SHELL" "/usr/local/bin/zsh")
+(setenv "BLOG" "/Users/zerok/blog")
 (setq exec-path (append exec-path '("/usr/local/bin" "/Users/zerok/go/bin")))
 (setenv "GOPATH" "/Users/zerok/go")
 (setq shell-file-name "/usr/local/bin/zsh")
+(add-to-list 'load-path "~/.emacs.d/lisp")
 
 (require 'cask "/usr/local/share/emacs/site-lisp/cask/cask.el")
 (cask-initialize)
@@ -50,4 +52,5 @@
 (require 'alchemist)
 (server-start)
 (remove-hook 'kill-buffer-query-functions 'server-kill-buffer-query-function)
+(autoload 'jediselect "jediselect.el" "Allows you to select a virtualenv for Jedi" t)
 ;;; init.el ends here
