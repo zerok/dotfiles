@@ -52,3 +52,5 @@
 (depends-on "paredit")
 (depends-on "evil-paredit")
 (depends-on "highlight-parentheses")
+(depends-on "smooth-scrolling")
+

@@ -138,6 +138,7 @@ whole process easier.
 (add-hook 'prog-mode-hook 'toggle-truncate-lines)
 (global-linum-mode 1) ;; show the current line number in the gutter
 (global-hl-line-mode 1) ;; highlight the currentl ine
+(setq smooth-scroll-margin 6)
 #+END_SRC
 
 ** Executable scripts
