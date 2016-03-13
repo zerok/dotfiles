@@ -1,54 +1,63 @@
 #+TITLE: zerok's Emacs configuration
 #+OPTIONS: toc:2
 * General Emacs settings
+** EditorConfig
+
+#+BEGIN_SRC elisp
+(use-package editorconfig
+  :ensure t)
+#+END_SRC
+
 ** Snippets
 
 Not much to add here. Snippets are simply a great thing to work with:
 
 #+BEGIN_SRC emacs-lisp
-(require 'yasnippet)
-(yas-global-mode 1)
+(use-package yasnippet
+  :ensure t
+  :config (yas-global-mode 1))
+#+END_SRC
+
+** Searching (ag, swiper)
+
+For searching I very much prefer ag over grep as it is simply much faster:
+
+#+BEGIN_SRC elisp
+(use-package ag
+  :ensure t)
+#+END_SRC
+
+... and for searching within a single document, swiper is pretty neat as it give
+a good overview where the matches are:
+
+#+BEGIN_SRC elisp
+(use-package swiper
+  :ensure t)
+#+END_SRC
+
+For searching within the visual area of a buffer, avy is awesome to be able to
+jump to a specific character:
+#+BEGIN_SRC elisp
+(use-package avy
+  :ensure t)
 #+END_SRC
 
 ** Unicode fonts
 #+BEGIN_SRC emacs-lisp
-(set-fontset-font t 'unicode "Symbola" nil 'prepend)
-(require 'unicode-fonts)
-(unicode-fonts-setup)
+(use-package unicode-fonts
+  :ensure t
+  :init (set-fontset-font t 'unicode "Symbola" nil 'prepend)
+  :config (unicode-fonts-setup))
 #+END_SRC
 ** Theme
 #+begin_src emacs-lisp
-;(load-theme 'smyx t)
-(require 'moe-theme)
-(load-theme 'moe-dark t)
-(require 'powerline)
-(require 'powerline-evil)
-(powerline-moe-theme)
+(use-package moe-theme
+  :ensure t
+  :config (load-theme 'moe-dark t))
+(use-package powerline
+  :ensure t
+  :config (powerline-moe-theme))
 #+end_src
-** Enable evil mode
-
-While most of Emacs is great, the editing experience I've come to love from
-using VIM for more than a decade is something I don't want to miss. And if I can
-combine that with the awesome development environment that Emacs+LISP is: All
-the better!
-
-#+begin_src emacs-lisp
-(evil-mode 1)
-#+end_src
-
-In order still to be able to use C-u, I've remapped page-up and page-down to C-k
-and C-j as described on
-http://juanjoalvarez.net/es/detail/2014/sep/19/vim-emacsevil-chaotic-migration-guide/ .
-
-#+begin_src emacs-lisp
-(define-key evil-normal-state-map (kbd "C-k") (lambda ()
-                    (interactive)
-                    (evil-scroll-up nil)))
-(define-key evil-normal-state-map (kbd "C-j") (lambda ()
-                        (interactive)
-                        (evil-scroll-down nil)))
-#+end_src
-
 ** Simple confirmation
 
 By default Emacs asks for "yes" or "no" during confirmation dialogs. "y" and "n"
@@ -60,8 +69,24 @@ should really suffice...
 
 ** OSX Integration
 #+BEGIN_SRC emacs-lisp
-(when (memq window-system '(mac ns))
-  (exec-path-from-shell-initialize))
+(use-package exec-path-from-shell
+  :if (memq window-system '(mac ns))
+  :ensure t
+  :config (exec-path-from-shell-initialize))
+#+END_SRC
+** Dash integration
+
+#+BEGIN_SRC elisp
+(use-package dash-at-point
+  :ensure t)
+#+END_SRC
+
+** Git and project integration
+#+BEGIN_SRC elisp
+(use-package magit
+  :ensure t)
+(use-package projectile
+  :ensure t)
 #+END_SRC
 ** Indentation & line width
 #+begin_src emacs-lisp
@@ -69,7 +94,11 @@ should really suffice...
 (setq-default indent-tabs-mode nil) ;; don't use tabs
 (setq-default tab-width 4)
 ;(setq indent-line-function 'insert-tab)
-(indent-guide-global-mode)
+(use-package indent-guide
+  :ensure t
+  :config
+  (indent-guide-global-mode)
+  )
 #+end_src
 
 And disable auto-fill-mode by default as it tends to get in the way. I just
@@ -124,10 +153,15 @@ buffers. So I basically enabled Helm and IDO in multiple places to make this
 whole process easier.
 
 #+begin_src emacs-lisp
-(require 'helm-config)
-(ido-mode 1)
-(ido-everywhere 1)
-(setq ido-use-faces nil)
+(use-package helm
+  :ensure t)
+(use-package helm-anything
+  :ensure t)
+(use-package helm-cmd-t
+  :ensure t)
+; (ido-mode 1)
+; (ido-everywhere 1)
+; (setq ido-use-faces nil)
 #+end_src
 
 ** Line handling
@@ -138,7 +172,10 @@ whole process easier.
 (add-hook 'prog-mode-hook 'toggle-truncate-lines)
 (global-linum-mode 1) ;; show the current line number in the gutter
 (global-hl-line-mode 1) ;; highlight the currentl ine
-(setq smooth-scroll-margin 6)
+(use-package smooth-scrolling
+  :ensure t
+  :config
+  (setq smooth-scroll-margin 6))
 #+END_SRC
 
 ** Executable scripts
@@ -166,10 +203,13 @@ http://www.emacswiki.org/emacs/DeletingWhitespace
 #+begin_src emacs-lisp
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 #+end_src
-** Enable auto-completion globally
+** Autocompletion with company
 #+BEGIN_SRC emacs-lisp
-(setq company-dabbrev-downcase nil)
-(global-company-mode 1)
+(use-package company
+  :ensure t
+  :config
+  (setq company-dabbrev-downcase nil)
+  (add-hook 'after-init-hook 'global-company-mode))
 #+END_SRC
 ** Show matching parens
 #+BEGIN_SRC emacs-lisp
@@ -183,7 +223,10 @@ http://www.emacswiki.org/emacs/DeletingWhitespace
 #+END_SRC
 ** Code checking
 #+BEGIN_SRC
-(add-hook 'after-init-hook #'global-flycheck-mode) ;; static code checking
+(use-package flycheck
+  :ensure t
+  :config
+  (add-hook 'after-init-hook #'global-flycheck-mode))
 #+END_SRC
 ** Custom mode mapping
 #+BEGIN_SRC emacs-lisp
@@ -195,7 +238,10 @@ In NeoTree I prefer to have toggling automatically jump to the folder of the
 buffer I'm currently at:
 
 #+BEGIN_SRC emacs-lisp
-(setq neo-smart-open t)
+(use-package neotree
+  :ensure t
+  :config
+  (setq neo-smart-open t))
 #+END_SRC
 
 * Locale
@@ -240,10 +286,14 @@ first example you learn about when looking at the hydra website and it's a good
 one 😉
 
 #+BEGIN_SRC emacs-lisp
-(defhydra hydra-zoom (global-map "<f2>")
-  "zoom"
-  ("k" text-scale-increase "in")
-  ("j" text-scale-decrease "out"))
+(use-package hydra
+  :ensure t
+  :config
+  (defhydra hydra-zoom (global-map "<f2>")
+    "zoom"
+    ("k" text-scale-increase "in")
+    ("j" text-scale-decrease "out"))
+  )
 #+END_SRC
 ** Emojis
 #+BEGIN_SRC emacs-lisp
@@ -362,8 +412,12 @@ extension, so now I have to asign "*.mdown" extensions to Markdown in whatever
 editor I use ...
 
 #+begin_src emacs-lisp
-(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-(add-to-list 'auto-mode-alist '("\\.mdown\\'" . markdown-mode))
+(use-package markdown-mode
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+  (add-to-list 'auto-mode-alist '("\\.mdown\\'" . markdown-mode))
+  )
 #+end_src
 *** Encoding and Decoding
 
@@ -419,26 +473,28 @@ feel more similar to things like footnotes:
 #+END_SRC
 ** JavaScript
 
-I really prefer js2-mode over js-mode 😉
+- I really prefer js2-mode over js-mode 😉
+- For working with React it helps if imenu is working properly with it's
+  internal object structure.
+- Indenting esp. for consts is a bit weird. Some projects like the next line (in
+  a combined declaration) to be at the 6th column while others prefer it to
+  continue with the default indentation (e.g. 4). To make rotating here easier,
+  js2-mode offers a nice setting:
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'auto-mode-alist (cons (rx ".js" eos) 'js2-mode))
+(use-package js2-mode
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist (cons (rx ".js" eos) 'js2-mode))
+  ; Better imode integration
+  (add-hook 'js2-mode-hook 'js2-imenu-extras-mode)
+  ; Indent optimizations
+  (setq js2-bounce-indent-p t))
 #+END_SRC
 
-For working with React it helps if imenu is working properly with it's internal
-object structure:
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'js2-mode-hook 'js2-imenu-extras-mode)
-#+END_SRC
-
-Indenting esp. for consts is a bit weird. Some projects like the next line (in a
-combined declaration) to be at the 6th column while others prefer it to continue
-with the default indentation (e.g. 4). To make rotating here easier, js2-mode
-offers a nice setting:
-
-#+BEGIN_SRC emacs-lisp
-(setq js2-bounce-indent-p t)
+#+BEGIN_SRC elisp
+(use-package jsx-mode
+  :ensure t)
 #+END_SRC
 
 *** JSONLinting
@@ -500,10 +556,24 @@ For JSX from https://truongtx.me/2014/03/10/emacs-setup-jsx-mode-and-jsx-syntax-
 #+BEGIN_SRC emacs-lisp
 (defun zerok/python-mode-jedi-hook ()
   (add-to-list 'company-backends 'company-jedi))
-(setq jedi:complete-on-dot t)
-(add-hook 'python-mode-hook 'zerok/python-mode-jedi-hook)
+
+(use-package jedi-core
+  :ensure t
+  :config
+  (setq jedi:complete-on-dot t))
+
+(use-package company-jedi
+  :ensure t
+  :config
+  (add-hook 'python-mode-hook 'zerok/python-mode-jedi-hook))
 #+END_SRC
 ** Sass/SCSS
+
+#+BEGIN_SRC elisp
+(use-package scss-mode
+  :ensure t)
+#+END_SRC
+
 ** HTML
 
 By default SGML documents have a indentation of 2 characters. Seems like you
@@ -540,40 +610,66 @@ the lenght of the line above it with C-c C-c.
 
 (define-key rst-mode-map "\C-c\C-c" 'zs-rst-complete-heading)
 #+end_src
-** Rust
-#+BEGIN_SRC emacs-lisp
-(eval-after-load 'flycheck
-  '(add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
-#+END_SRC
 ** Elixir
 #+BEGIN_SRC emacs-lisp
-(setq elixir-compiler-command  "/usr/local/bin/elixirc")
-(setq alchemist-mix-command "/usr/local/bin/mix")
-(setq alchemist-iex-program-name "/usr/local/bin/iex")
-(setq alchemist-execute-command "/usr/local/bin/elixir")
-(setq alchemist-compile-command "/usr/local/bin/elixirc")
 (defun zerok/elixir-mode-tabwidth-setup ()
   ""
   (setq tab-width 2))
-(add-hook 'elixir-mode-hook 'zerok/elixir-mode-tabwidth-setup)
+(use-package elixir-mode
+  :ensure t
+  :config
+  (setq elixir-compiler-command  "/usr/local/bin/elixirc")
+  (add-hook 'elixir-mode-hook 'zerok/elixir-mode-tabwidth-setup))
 #+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
+(use-package alchemist
+  :ensure t
+  :config
+  (setq alchemist-mix-command "/usr/local/bin/mix")
+  (setq alchemist-iex-program-name "/usr/local/bin/iex")
+  (setq alchemist-execute-command "/usr/local/bin/elixir")
+  (setq alchemist-compile-command "/usr/local/bin/elixirc")
+  )
+#+END_SRC
+
 ** Golang
 First, let's set up the basic system including compilation and company support:
 
 #+BEGIN_SRC emacs-lisp
+(defun zerok/go-mode-compilation-setup ()
+  "Configures the compilation command for go mode"
+  (set (make-local-variable 'compilation-read-command) nil)
+  (set (make-local-variable 'compile-command) "go vet && go build"))
+
+(defun zerok/go-mode-enable-company ()
+  "Enable company-go in go-mode"
+  (set (make-local-variable 'company-backends) '(company-go))
+  (company-mode))
+
+(use-package go-mode
+  :ensure t
+  :config
   (setq gofmt-command "goimports")
   (add-hook 'before-save-hook 'gofmt-before-save)
-  (defun zerok/go-mode-compilation-setup ()
-    "Configures the compilation command for go mode"
-    (set (make-local-variable 'compilation-read-command) nil)
-    (set (make-local-variable 'compile-command) "go vet && go build"))
-  (defun zerok/go-mode-enable-company ()
-    "Enable company-go in go-mode"
-    (set (make-local-variable 'company-backends) '(company-go))
-    (company-mode))
   (add-hook 'go-mode-hook 'zerok/go-mode-compilation-setup)
+  )
+
+(use-package company-go
+  :ensure t
+  :config
   (add-hook 'go-mode-hook 'zerok/go-mode-enable-company)
+  )
 #+END_SRC
+
+For better test integration, there's also gotest 😉
+
+#+BEGIN_SRC elisp
+(use-package gotest
+  :ensure t)
+#+END_SRC
+
 *** Support for GB projects
 #+BEGIN_SRC emacs-lisp
 (defun zerok/setup-gb-gopath ()
@@ -612,23 +708,38 @@ First, let's set up the basic system including compilation and company support:
 #+END_SRC
 ** YAML
 
-   RAML is also only just a special YAML file:
+RAML is also only just a special YAML file:
 
-   #+BEGIN_SRC emacs-lisp
-   (add-to-list 'auto-mode-alist '("\\.raml\\'" . yaml-mode))
-   #+END_SRC
+#+BEGIN_SRC emacs-lisp
+(use-package yaml-mode
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist '("\\.raml\\'" . yaml-mode)))
+#+END_SRC
 
 ** Clojure
+
+General tooling for clojure:
+
+#+BEGIN_SRC elisp
+(use-package clojure-mode
+  :ensure t)
+
+(use-package cider
+  :ensure t)
+#+END_SRC
 
 Highlight-parentheses-mode is immensely useful when you're deep down in nested
 parens:
 
 #+BEGIN_SRC emacs-lisp
-  (require 'highlight-parentheses)
-  (defun zerok/clojure-hook-highlight-parens-mode ()
-    "Enable highlight-parenthesis-mode when entering clojure mode"
-    (highlight-parentheses-mode t))
-  (add-hook 'clojure-mode-hook 'zerok/clojure-hook-highlight-parens-mode)
+(defun zerok/clojure-hook-highlight-parens-mode ()
+  "Enable highlight-parenthesis-mode when entering clojure mode"
+  (highlight-parentheses-mode t))
+(use-package highlight-parentheses
+  :ensure t
+  :config
+  (add-hook 'clojure-mode-hook 'zerok/clojure-hook-highlight-parens-mode))
 #+END_SRC
 * OrgMode
 ** Daily Standup Report
@@ -744,8 +855,10 @@ again. Probably nothing for the immediate feature but that option doesn't hurt.
 #+BEGIN_SRC emacs-lisp
   (defun zs-get-current-journal-file ()
     "This returns the journal file that should be used for today."
-    (format-time-string "~/journal/%Y/%Y-%m-%d.org")
-    )
+    (let ((folder (format-time-string "~/journal/%Y")))
+      (progn (when (not (file-exists-p folder))
+               (make-directory folder))
+             (format-time-string "~/journal/%Y/%Y-%m-%d.org"))))
 
   (defun zs-get-previous-journal-file ()
     "Returns the path to the journal file of the previous day."
@@ -860,18 +973,41 @@ Enable projectile everywhere:
 (projectile-global-mode)
 #+END_SRC
 * EvilMode
-** Disable evil-mode in specific situations
+** Enable evil mode
+
+While most of Emacs is great, the editing experience I've come to love from
+using VIM for more than a decade is something I don't want to miss. And if I can
+combine that with the awesome development environment that Emacs+LISP is: All
+the better!
+
+In order still to be able to use C-u, I've remapped page-up and page-down to C-k
+and C-j as described on
+http://juanjoalvarez.net/es/detail/2014/sep/19/vim-emacsevil-chaotic-migration-guide/ .
 
 As much as I like evil-mode, I don't want it active where it gets in the way
 with some other major or special modes like neotree et al. until I've found
 some good ways to integrate it better there:
 
-#+BEGIN_SRC emacs-lisp
-(evil-set-initial-state 'neotree-mode 'emacs)
-(evil-set-initial-state 'dired-mode 'emacs)
-(evil-set-initial-state 'shell-mode 'emacs)
-(evil-set-initial-state 'magit-popup-mode 'emacs)
-#+END_SRC
+#+begin_src emacs-lisp
+(use-package evil
+  :ensure t
+  :config
+  (evil-mode 1)
+  ; Remapping of navigation keys
+  (define-key evil-normal-state-map (kbd "C-k") (lambda ()
+                      (interactive)
+                      (evil-scroll-up nil)))
+  (define-key evil-normal-state-map (kbd "C-j") (lambda ()
+                          (interactive)
+                          (evil-scroll-down nil)))
+
+  ; Disable for specific major modes
+  (evil-set-initial-state 'neotree-mode 'emacs)
+  (evil-set-initial-state 'dired-mode 'emacs)
+  (evil-set-initial-state 'shell-mode 'emacs)
+  (evil-set-initial-state 'magit-popup-mode 'emacs)
+  )
+#+end_src
 
 ** Leader hotkeys
 
@@ -881,17 +1017,23 @@ before I added evil-leader to my Emacs configuration and remapped some of my
 most commonly used shortcuts:
 
 #+BEGIN_SRC emacs-lisp
-(global-evil-leader-mode)
-(evil-leader/set-leader "\\")
-(evil-leader/set-key
-    "t" 'helm-cmd-t
-    "b" 'helm-buffers-list
-    "k" 'kill-buffer
-    "gs" 'magit-status
-    "c" 'compile
-    "n" 'next-error
-    "\\" 'avy-goto-char
-    )
+(use-package evil-leader
+  :ensure t
+  :config
+  (global-evil-leader-mode)
+  (evil-leader/set-leader "\\")
+  (evil-leader/set-key
+      "t" 'helm-cmd-t
+      "b" 'helm-buffers-list
+      "k" 'kill-buffer
+      "gs" 'magit-status
+      "c" 'compile
+      "n" 'next-error
+      "\\" 'avy-goto-char
+      )
+
+  (evil-leader/set-key-for-mode 'python-mode "v" 'jediselect)
+  )
 #+END_SRC
 ** evil-commentary
 
@@ -900,7 +1042,8 @@ has become really hard to get it out of my system. But why should I when there
 is [[https://github.com/linktohack/evil-commentary][evil-commentary]] out there :-D
 
 #+BEGIN_SRC emacs-lisp
-(evil-commentary-mode)
+(use-package evil-commentary
+  :config (evil-commentary-mode))
 #+END_SRC
 * Blogging
 

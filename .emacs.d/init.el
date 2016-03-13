@@ -6,8 +6,11 @@
 (setq shell-file-name "/usr/local/bin/zsh")
 (add-to-list 'load-path "~/.emacs.d/lisp")
 
-(require 'cask "/usr/local/share/emacs/site-lisp/cask/cask.el")
-(cask-initialize)
+(require 'package)
+(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                         ("marmalade" . "https://marmalade-repo.org/packages/")
+                         ("melpa" . "https://melpa.org/packages/")))
+(package-initialize)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -29,27 +32,29 @@
  '(line-spacing 4)
  '(ns-antialias-text t)
  '(ns-command-modifier (quote meta))
+ '(paradox-automatically-star nil)
  '(safe-local-variable-values (quote ((encoding . utf-8))))
  '(size-indication-mode t)
  '(tool-bar-mode nil)
  '(unicode-fonts-skip-font-groups (quote (decorative low-quality-glyphs))))
 (custom-set-faces
- '(default ((t (:inherit nil :stipple nil :background "#282828" :foreground "#e5e5e5" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "nil" :family "Inconsolata for Powerline")))))
-;;(setq flycheck-idle-change-delay 2)
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:inherit nil :stipple nil :background "#282828" :foreground "#e5e5e5" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "nil" :family "Hack")))))
 
 ;; https://github.com/topfunky/PeepOpen-Issues/issues/13
 (setq ns-pop-up-frames nil)
 
-;; (set-terminal-coding-system 'utf-8-unix)
-;; (setq default-buffer-file-coding-system 'utf-8-unix)
+(require 'use-package)
+(use-package org
+  :ensure t
+  :config
+  (org-babel-load-file "~/.emacs.d/settings.org"))
 
-(require 'org)
 (load-file "~/.emacs.d/gorename.el")
 (load-file "~/.emacs.d/private.el")
-(org-babel-load-file "~/.emacs.d/settings.org")
-(add-hook 'after-init-hook 'global-company-mode)
-(require 'elixir-mode)
-(require 'alchemist)
 (server-start)
 (remove-hook 'kill-buffer-query-functions 'server-kill-buffer-query-function)
 (autoload 'jediselect "jediselect.el" "Allows you to select a virtualenv for Jedi" t)
