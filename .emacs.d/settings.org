@@ -3,10 +3,12 @@
 * General Emacs settings
 ** EditorConfig
 
-#+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp
 (use-package editorconfig
   :ensure t)
 #+END_SRC
+
+#+RESULTS:
 
 ** Snippets
 
@@ -571,7 +573,8 @@ For JSX from https://truongtx.me/2014/03/10/emacs-setup-jsx-mode-and-jsx-syntax-
 
 #+BEGIN_SRC elisp
 (use-package scss-mode
-  :ensure t)
+  :ensure t
+  :config (add-to-list 'auto-mode-alist '("*scss\\'" . scss-mode)))
 #+END_SRC
 
 ** HTML
@@ -1043,6 +1046,7 @@ is [[https://github.com/linktohack/evil-commentary][evil-commentary]] out there 
 
 #+BEGIN_SRC emacs-lisp
 (use-package evil-commentary
+  :ensure t
   :config (evil-commentary-mode))
 #+END_SRC
 * Blogging
@@ -1074,4 +1078,10 @@ function:
       (if (string= current-directory image-directory)
           (insert (concat "<figure>\n    <img src=\"" (file-name-nondirectory imgsrc) "\" alt=\"\" />\n    <figcaption><p>" caption "</p></figcaption>\n</figure>"))
         (message "The image file has to be in the same directory as the post."))))
+#+END_SRC
+* Docker
+
+#+BEGIN_SRC elisp
+(use-package dockerfile-mode
+  :config (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode)))
 #+END_SRC
