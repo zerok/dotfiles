@@ -897,41 +897,6 @@ again. Probably nothing for the immediate feature but that option doesn't hurt.
           ))
 
 #+END_SRC
-** Notes navigation
-
-In order to have easy access to the most recent notes I've created a small helm
-helper that lists all this year's notes in reverse order with the most recent on
-the very top:
-
-#+BEGIN_SRC emacs-lisp
-  (defun zerok/recent-notes--open-note ()
-    "Just the callback that is executed when a note has been selected."
-    (interactive)
-    (helm-exit-and-execute-action (lambda (candidate)
-                                    (find-file (car candidate)))))
-
-  (defun zerok/recent-notes--display-name (path)
-    "Prepares the display version of a given note's path"
-    (replace-regexp-in-string "\\([[:digit:]]+_[[:digit:]]+\\)-\\(.*\\)" "[\\1] \\2" (file-name-base path)))
-
-  (defun zerok/recent-notes--find-notes ()
-    "Returns a list of (notename . fullpath) pairs for the latest 10 notes."
-    (let* ((current-year (format-time-string "%Y"))
-          (base-path (format "~/notes/%s" current-year)))
-      (mapcar (lambda (file) (cons (zerok/recent-notes--display-name file) (cons file ())))
-              (reverse (directory-files base-path t "\\.org$")))))
-
-  (defun zerok/recent-notes ()
-    ""
-    (interactive)
-    (let ((keys (make-sparse-keymap)))
-      (define-key keys (kbd "<RET>") 'zerok/recent-notes--open-note)
-      (helm :sources (helm-build-sync-source "Recent notes"
-                       :candidates (zerok/recent-notes--find-notes)
-                       :keymap keys
-                       :fuzzy-match t)
-            :buffer "*helm notes*")))
-#+END_SRC
 ** Auto-Export Dropbox notes
 I put notes that I might share with other people or that I want to have
 available on the go in Dropbox. As the official Dropbox client doesn't really
@@ -1084,4 +1049,17 @@ function:
 #+BEGIN_SRC elisp
 (use-package dockerfile-mode
   :config (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode)))
+#+END_SRC
+* Notes
+
+Among other things I also use orgmode in combination with Dropbox as a
+replacement for Evernote. The idea is, that private notes are stored in
+~$HOME/notes~ while public ones are stored (using otherwise the same folder
+structure) in ~$HOME/Dropbox/notes~.
+
+To make my live easier, I have a couple of helper functions for moving notes
+around and publishing them (into HTML).
+
+#+BEGIN_SRC elisp
+(load-file "~/.emacs.d/notes.el")
 #+END_SRC
