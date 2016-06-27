@@ -1060,6 +1060,6 @@ structure) in ~$HOME/Dropbox/notes~.
 To make my live easier, I have a couple of helper functions for moving notes
 around and publishing them (into HTML).
 
-#+BEGIN_SRC elisp
+#+BEGIN_SRC emacs-lisp
 (load-file "~/.emacs.d/notes.el")
 #+END_SRC
