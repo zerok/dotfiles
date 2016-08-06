@@ -886,10 +886,21 @@ again. Probably nothing for the immediate feature but that option doesn't hurt.
                (make-directory folder))
              (format "%s-%s.org" prefix name))))
 
+  (defun zerok/capture-asciidoc-note-file ()
+    "Generate a new note file name based on user input and the current time"
+    (let ((name (read-string "Name: "))
+          (folder (format-time-string "~/notes/%Y"))
+          (prefix (format-time-string "~/notes/%Y/%Y%m%d_%H%M")))
+      (progn (when (not (file-exists-p folder))
+               (make-directory folder))
+             (format "%s-%s.adoc" prefix name))))
+
   (setq org-capture-templates
         '(("t" "Todo" entry (file+headline "~/org/gtd.org" "Inbox")
            "* TODO %?\n  :PROPERTIES:\n  :CREATED: %T\n  :END:\n")
           ("n" "Notes" plain (file zerok/capture-note-file)
+           "%?\n")
+          ("a" "Notes (AsciiDoc)" plain (file zerok/capture-asciidoc-note-file)
            "%?\n")
           ("j" "Journal" entry (file (zs-get-current-journal-file))
            "* %?\n\n  CREATED: %T"
@@ -1062,4 +1073,10 @@ around and publishing them (into HTML).
 
 #+BEGIN_SRC emacs-lisp
 (load-file "~/.emacs.d/notes.el")
+#+END_SRC
+* AsciiDoc
+
+#+BEGIN_SRC elisp
+(use-package adoc-mode
+  :config (add-to-list 'auto-mode-alist '("\\.adoc\\'" . adoc-mode)))
 #+END_SRC

@@ -65,7 +65,7 @@
   (let* ((current-year (format-time-string "%Y"))
         (base-path (concat (file-name-as-directory notes--private-root) current-year)))
     (mapcar (lambda (file) (cons (_notes/recent-notes--display-name file) (cons file ())))
-            (reverse (directory-files base-path t "\\.org$")))))
+            (reverse (directory-files base-path t "\\.\\(org\\|adoc\\)$")))))
 
 (defun notes/recent ()
   ""
