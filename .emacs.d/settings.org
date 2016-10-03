@@ -1083,5 +1083,24 @@ around and publishing them (into HTML).
 
 #+BEGIN_SRC elisp
 (use-package adoc-mode
-  :config (add-to-list 'auto-mode-alist '("\\.adoc\\'" . adoc-mode)))
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist '("\\.adoc\\'" . adoc-mode)))
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
+(defun adoc/create-html ()
+  (interactive)
+  (save-excursion
+    (when (equal (file-name-extension buffer-file-name) "adoc")
+      (message (shell-command-to-string (concat "asciidoctor " buffer-file-name)))
+    )
+  ))
+(add-hook 'after-save-hook 'adoc/create-html)
+#+END_SRC
+
+* Salt
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.sls\\'". yaml-mode))
 #+END_SRC
