@@ -1030,36 +1030,6 @@ is [[https://github.com/linktohack/evil-commentary][evil-commentary]] out there 
   :ensure t
   :config (evil-commentary-mode))
 #+END_SRC
-* Blogging
-
-For my blog I've create a handful of helper scripts to make working with drafts
-easier. To make drafting even easier, though, I needed a way to integrate them
-with my Emacs setup. This is where =blog/craft-draft= comes in. It will use my
-external scripts to generate a new draft and also open the main file:
-
-
-#+BEGIN_SRC emacs-lisp
-(defun blog/create-draft (draftname)
-  "This creates a new post draft and opens the index.mdown file in it."
-  (interactive "sSlug: ")
-  (when (eq 0 (shell-command (concat "blogcli create-draft -slug=" draftname)))
-    (find-file (concat "~/blog/drafts/" draftname "/index.md"))))
-#+END_SRC
-
-Something else that I do quite often is insert images into my posts. Snippets
-don't work that well here for me for some reason, so here comes a custom
-function:
-
-#+BEGIN_SRC emacs-lisp
-  (defun blog/insert-fig (imgsrc caption)
-    "This inserts a new figure into on the current cursor position"
-    (interactive "FImage Source: \nsCaption: ")
-    (let* ((current-directory (file-name-directory buffer-file-name))
-           (image-directory (file-name-directory imgsrc)))
-      (if (string= current-directory image-directory)
-          (insert (concat "<figure>\n    <img src=\"" (file-name-nondirectory imgsrc) "\" alt=\"\" />\n    <figcaption><p>" caption "</p></figcaption>\n</figure>"))
-        (message "The image file has to be in the same directory as the post."))))
-#+END_SRC
 * Docker
 
 #+BEGIN_SRC elisp
