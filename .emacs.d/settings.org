@@ -664,6 +664,11 @@ First, let's set up the basic system including compilation and company support:
   :config
   (add-hook 'go-mode-hook 'zerok/go-mode-enable-company)
   )
+
+(use-package go-guru
+  :ensure t
+  :config
+  (add-hook 'go-mode-hook 'go-guru-hl-identifier-mode))
 #+END_SRC
 
 For better test integration, there's also gotest 😉
