@@ -954,7 +954,12 @@ content to every generated HTML file got a bit more complicated:
 Enable projectile everywhere:
 
 #+BEGIN_SRC emacs-lisp
-(projectile-global-mode)
+(use-package projectile
+  :ensure t
+  :config
+  (projectile-global-mode))
+(use-package counsel-projectile
+  :ensure t)
 #+END_SRC
 * EvilMode
 ** Enable evil mode
@@ -1007,16 +1012,18 @@ most commonly used shortcuts:
   (global-evil-leader-mode)
   (evil-leader/set-leader "\\")
   (evil-leader/set-key
-      "t" 'helm-cmd-t
+      "t" 'cousel-projectile-find-file
       "b" 'helm-buffers-list
       "k" 'kill-buffer
       "gs" 'magit-status
       "c" 'compile
       "n" 'next-error
+      "p" 'previous-error
       "\\" 'avy-goto-char
       )
 
   (evil-leader/set-key-for-mode 'python-mode "v" 'jediselect)
+  (evil-leader/set-key-for-mode 'org-mode "c" 'org-html-export-to-html)
   )
 #+END_SRC
 ** evil-commentary
