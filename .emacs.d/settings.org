@@ -271,7 +271,7 @@ calendars to think so to:
 (global-set-key (kbd "C-M-c") 'org-capture)
 (global-set-key (kbd "C-c C-x C-j") 'org-clock-goto)
 (global-set-key (kbd "C-c C-r") 'replace-string)
-(global-set-key (kbd "M-t") 'helm-cmd-t)
+(global-set-key (kbd "M-t") 'counsel-projectile-find-file)
 (global-set-key (kbd "<f8>") 'neotree-toggle)
 (global-set-key (kbd "C-<f6>") 'magit-status)
 (global-set-key (kbd "<f9>") 'avy-goto-char)
