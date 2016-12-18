@@ -1,3 +1,10 @@
+;; Among other things I also use orgmode in combination with Dropbox as a
+;; replacement for Evernote. The idea is, that private notes are stored in
+;; ~$HOME/notes~ while public ones are stored (using otherwise the same folder
+;; structure) in ~$HOME/Dropbox/notes~.
+;;
+;; To make my live easier, I have a couple of helper functions for moving notes
+;; around and publishing them (into HTML).
 (defcustom notes--private-root "~/notes"
   "Place to store private notes in"
   :group 'notes)
