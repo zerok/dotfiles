@@ -1,0 +1,3 @@
+Heavily inspired by these .emacs.d repositories:
+
+- https://github.com/magnars/.emacs.d
