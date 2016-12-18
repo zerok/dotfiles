@@ -113,5 +113,9 @@
          :empty-lines 1)
         ))
 
+(defun journal/search (term)
+  (interactive "MSearch: ")
+  (ag-files term '(:file-regex "\\.org$") "~/journal"))
+
 (provide 'setup-org)
 ;;; setup-org.el ends here
