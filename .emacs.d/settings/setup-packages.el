@@ -6,6 +6,7 @@
 
 ;; Also make sure that use-package is available
 (package-install 'use-package)
+(package-install 'spacemacs-theme)
 
 (provide 'setup-packages)
 ;;; setup-packages.el ends here
