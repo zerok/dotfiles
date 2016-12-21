@@ -48,7 +48,9 @@
   (load file))
 (load (expand-file-name "notes.el" user-emacs-directory))
 
-(load-file "~/.emacs.d/private.el")
+(defvar private-settings-file (expand-file-name "private.el" user-emacs-directory))
+(when (file-exists-p private-settings-file)
+  (load-file private-settings-file))
 (server-start)
 (remove-hook 'kill-buffer-query-functions 'server-kill-buffer-query-function)
 ;;; init.el ends here
