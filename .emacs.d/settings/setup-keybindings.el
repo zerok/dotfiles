@@ -73,7 +73,11 @@
 (global-set-key (kbd "C-c C-<SPC>") 'point-to-register)
 (global-set-key (kbd "C-c C-j") 'jump-to-register)
 (global-set-key (kbd "C-j") 'emmet-expand-line)
-(global-set-key (kbd "C-s") 'swiper)
+(global-set-key (kbd "M-l") 'windmove-right)
+(global-set-key (kbd "M-h") 'windmove-left)
+(global-set-key (kbd "M-j") 'windmove-down)
+(global-unset-key (kbd "M-k"))
+(global-set-key (kbd "M-k") 'windmove-up)
 
 ;; For some things it makes sense not to loose the prefix. Text-zooming is the
 ;; first example you learn about when looking at the hydra website and it's a
