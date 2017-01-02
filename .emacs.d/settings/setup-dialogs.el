@@ -6,4 +6,8 @@
 (use-package helm-anything
   :ensure t)
 
+(use-package swiper
+  :ensure t
+  :config)
+
 (provide 'setup-dialogs)

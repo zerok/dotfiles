@@ -72,6 +72,8 @@
 (global-set-key (kbd "C-c k") 'company-complete)
 (global-set-key (kbd "C-c C-<SPC>") 'point-to-register)
 (global-set-key (kbd "C-c C-j") 'jump-to-register)
+(global-unset-key (kbd "C-s"))
+(global-set-key (kbd "C-s") 'swiper)
 (global-set-key (kbd "C-j") 'emmet-expand-line)
 (global-set-key (kbd "M-l") 'windmove-right)
 (global-set-key (kbd "M-h") 'windmove-left)
