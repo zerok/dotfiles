@@ -46,6 +46,7 @@
 
   (evil-leader/set-key-for-mode 'python-mode "v" 'jediselect)
   (evil-leader/set-key-for-mode 'markdown-mode "c" 'zerok/preview-markdown)
+  (evil-leader/set-key-for-mode 'markdown-mode "l" 'zerok/markdown/wrap-link)
   (evil-leader/set-key-for-mode 'org-mode "c" 'org-html-export-to-html)
   )
 
