@@ -1,0 +1,57 @@
+source /usr/local/share/antigen/antigen.zsh
+antigen use oh-my-zsh
+antigen apply
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+source /usr/local/opt/fzf/shell/completion.zsh
+[ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
+
+precmd() {
+    local task
+    local k8s
+    local gitinfo
+    
+    export RPROMPT=""
+    if [ -f "~/.clocked/activeCode" ]; then
+	task=$(cat "~/.clocked/activeCode")
+	if [ ! -z "${task}" ]; then
+	    export PPROMPT="%{$fg[blue]%}[task: %B$task%b]%{$reset_color%}"
+	fi
+    fi
+    k8s=$(kubectl config current-context | tr -d '\n')
+    if [ ! -z "$k8s" ]; then
+	if [ ! -z "$RPROMPT" ]; then
+	   export RPROMPT="$RPROMPT "
+	fi
+	export RPROMPT="$RPROMPT%{$fg[yellow]%}[k8s: %B$k8s%b]%{$reset_color%}"
+    fi
+    gitinfo=$(git_prompt_info)
+    if [ ! -z "${gitinfo}" ]; then
+        if [ ! -z "${RPROMPT}" ]; then
+            RPROMPT="${RPROMPT} "
+        fi
+        RPROMPT="${RPROMPT}%{$fg[green]%}[git: %B${gitinfo}%b]%{$reset_color%}"
+    fi
+}
+
+export PROMPT="%F{blue}$%F{none} %~/ "
+
+gpgconf --launch gpg-agent
+export SSH_AUTH_SOCK=$HOME/.gnupg/S.gpg-agent.ssh
+{ eval `ssh-agent`; ssh-add -A; } &>/dev/null
+
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export GOPATH="$HOME"
+# Enable Go Modules support in Go v1.11
+export GO111MODULE=on
+export EDITOR="nvim -i $HOME/.nvim.shada"
+export VAULT_ADDR=http://127.0.0.1:8200
+
+alias k=kubectl
+alias vim="${EDITOR}"
+alias em="emacsclient"
+alias e=etcdctl
+alias l='exa -l'
+alias t='exa -l --tree'
+
