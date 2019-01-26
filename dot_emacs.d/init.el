@@ -15,7 +15,21 @@
   (copy-region-as-kill (line-beginning-position) (line-end-position))
   (message "Line copied"))
 
+(defun zerok/duplicate-line ()
+  (interactive)
+  (let ((col (current-column)))
+    (save-excursion
+      (copy-region-as-kill (line-beginning-position) (line-end-position))
+      (move-end-of-line nil)
+      (open-line 1)
+      (next-line)
+      (move-beginning-of-line nil)
+      (yank))
+    (forward-line)
+    (move-to-column col)))
+
 (global-set-key (kbd "C-c y l") 'zerok/yank-line)
+(global-set-key (kbd "C-c d l") 'zerok/duplicate-line)
 
 (use-package helm
   :ensure t
