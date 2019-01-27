@@ -5,6 +5,7 @@ antigen apply
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 source /usr/local/opt/fzf/shell/completion.zsh
 [ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
+eval "$(direnv hook zsh)"
 
 precmd() {
     local task
