@@ -167,6 +167,8 @@
     (dockerfile-mode projectile avy ivy company-go go-mode company evil-escape evil-leader evil evil-mode dracula-theme use-package markdown-mode magit helm overcast-theme yaml-mode)))
  '(standard-indent 2))
 
+(setq-default indent-tabs-mode nil)
+
 ;; Remove toolbar
 (tool-bar-mode -1)
 
