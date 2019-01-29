@@ -23,7 +23,7 @@
     (if activeTask
 	(progn
 	  (tasklog--ensure-directory)
-	  (find-file (concat (file-name-as-directory tasklog-directory) activeTask ".md")))
+	  (find-file (concat (file-name-as-directory tasklog-directory) activeTask ".org")))
       (message "No task active"))))
 
 (defun tasklog-close-all ()
