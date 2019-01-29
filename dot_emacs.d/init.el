@@ -2,12 +2,14 @@
 (package-initialize)
 (package-install 'use-package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(load-file (expand-file-name "~/.emacs.d/tasklog.el"))
+
+(setq inhibit-startup-screen t)
 
 ;; Emacs by default auto-saves files when visiting them. It creates
 ;; ".#filename" files which are symlinks and therefore do more harm
 ;; than good. This disables that feature:
 (setq auto-save-default nil)
-
 (setenv "PATH" "~/bin:/usr/local/bin:/usr/bin")
 
 (defun zerok/yank-line ()
@@ -30,6 +32,18 @@
 
 (global-set-key (kbd "C-c y l") 'zerok/yank-line)
 (global-set-key (kbd "C-c d l") 'zerok/duplicate-line)
+
+;; I tend to mistype C-x C-b instead of C-b quite a lot so I got rid
+;; of the other view ;-)
+(global-set-key (kbd "C-x C-b") 'switch-to-buffer)
+
+(defun chezmoi-apply ()
+  (interactive)
+    (setq default-directory (expand-file-name "~/.local/share/chezmoi"))
+    (let ((buf (get-buffer-create "*chezmoi*")))
+      (call-process "/usr/local/bin/chezmoi" nil buf nil "apply" "-v")
+      (display-buffer-pop-up-window buf nil)))
+
 
 (use-package helm
   :ensure t
@@ -82,6 +96,7 @@
    '(company-go-gocode-command "/Users/zerok/bin/gocode")
    '(gofmt-command "/Users/zerok/bin/goimports")
    '(go-command "/usr/local/bin/go")
+   '(godef-command "/Users/zerok/bin/godef")
    )
   (add-hook 'go-mode-hook (lambda ()
                             (set (make-local-variable 'company-backends) '(company-go))))
@@ -89,6 +104,9 @@
   ))
 (use-package ivy
   :ensure t
+  :init
+  (setq counsel-fzf-cmd "/usr/local/bin/fzf")
+  (require 'counsel)
   :bind (
 	 ("C-s" . swiper)
 	 ))
@@ -105,6 +123,17 @@
 (use-package dockerfile-mode
   :ensure t)
 
+(use-package doom-modeline
+  :ensure t
+  :init
+  (doom-modeline-mode 1)
+  (setq doom-modeline-icon t)
+  (setq doom-modeline-height 25))
+
+(use-package persp-mode
+  :ensure t
+  :init
+  (custom-set-variables '(persp-keymap-prefix (kbd "C-c x"))))
 (global-hl-line-mode 1)
 
 (defun zerok/toggle-evil-mode ()
@@ -170,4 +199,27 @@
 (custom-set-variables '(line-spacing 3))
 (global-set-key (kbd "C-c t") 'tasklog)
 
-(load-file "private-settings.el")
+(load-file (expand-file-name "~/.emacs.d/private-settings.el"))
+
+(use-package deft
+  :ensure t
+  :init
+  (setq deft-use-filename-as-title t)
+  (setq deft-recursive t)
+  (setq deft-extensions '("md" "org"))
+  (setq deft-default-extension "org")
+  (setq deft-directory "~/Documents/Notes"))
+
+;; OrgMode setup
+(setq org-agenda-files '("~/Documents/Notes"))
+(global-set-key (kbd "C-c o a") 'org-agenda)
+
+(defun zerok/org/generate-note-filename ()
+  (interactive)
+  (let ((topic (read-file-name "Topic: " (expand-file-name "~/Documents/Notes/"))))
+    (find-file topic)))
+
+(global-set-key (kbd "C-c o c") 'zerok/org/generate-note-filename)
+(global-set-key (kbd "C-c o m") 'org-match-sparse-tree)
+(add-hook 'org-mode-hook (lambda () (auto-fill-mode +1)))
+(add-hook 'markdown-mode-hook (lambda () (auto-fill-mode +1)))
