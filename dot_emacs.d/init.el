@@ -6,6 +6,13 @@
 
 (setq inhibit-startup-screen t)
 
+;; I'm lazy and I never want to enter "yes"/"no" where "y"/"n"
+;; suffices:
+(fset 'yes-or-no-p 'y-or-n-p)
+
+;; Emacs should start in all its glory:
+(toggle-frame-maximized)
+
 ;; Emacs by default auto-saves files when visiting them. It creates
 ;; ".#filename" files which are symlinks and therefore do more harm
 ;; than good. This disables that feature:
@@ -132,8 +139,13 @@
 
 (use-package persp-mode
   :ensure t
+  :config
+  (progn
+    (setq persp-keymap-prefix (kbd "C-c x"))
+    (setq persp-nil-name "Home"))
   :init
-  (custom-set-variables '(persp-keymap-prefix (kbd "C-c x"))))
+  (persp-mode +1))
+
 (global-hl-line-mode 1)
 
 (defun zerok/toggle-evil-mode ()
