@@ -237,3 +237,26 @@
 (global-set-key (kbd "C-c o m") 'org-match-sparse-tree)
 (add-hook 'org-mode-hook (lambda () (auto-fill-mode +1)))
 (add-hook 'markdown-mode-hook (lambda () (auto-fill-mode +1)))
+
+(defun zerok/markdown-insert-datetime ()
+  (interactive)
+  (zerok/kill-if-date-at-point)
+  (insert (format-time-string "%FT%T%z")))
+
+(defun zerok/kill-if-date-at-point ()
+  (save-excursion
+    (ignore-errors 
+      (let ((origin (point)))
+        (let ((start (re-search-backward "[\s\n]")))
+          (when (not (eq start nil))
+            (goto-char origin)
+            (let ((end (re-search-forward "[\s\n]")))
+              (when (not (eq end nil))
+                (when (consp (parse-iso8601-time-string (buffer-substring (+ start 1) end)))
+                  (kill-region (+ start 1) (- end 1))
+                  (goto-char (+ start 1)))))))))))
+
+(define-key markdown-mode-map (kbd "C-c !") 'zerok/markdown-insert-datetime)
+
+;; Render the current column next to the current line in the mode-line
+(column-number-mode +1)
