@@ -240,9 +240,11 @@
 (add-hook 'markdown-mode-hook (lambda () (auto-fill-mode +1)))
 
 (defun zerok/markdown-insert-datetime ()
+  "Insert or overwrite a date under point with an
+ISO8601-compatible date string."
   (interactive)
   (zerok/kill-if-date-at-point)
-  (insert (format-time-string "%FT%T%z")))
+  (insert (concat (format-time-string "%FT%T") (zerok/tz-iso8601-string))))
 
 (defun zerok/kill-if-date-at-point ()
   (save-excursion
@@ -257,7 +259,33 @@
                   (kill-region (+ start 1) (- end 1))
                   (goto-char (+ start 1)))))))))))
 
+(defun zerok/tz-iso8601-string ()
+  "Sadly, the %z placeholder in format-time-string doesn't follow
+ISO8601. This helper generates a valid numeric representation of
+the current timezone."
+  (let* ((seconds (car (current-time-zone)))
+         (minutes (/ seconds 60))
+         (restminutes (% seconds 60))
+         (hours (/ minutes 60)))
+    (format "%s%02d:%02d" (if (>= hours 0) "+" "-") (abs hours) (abs restminutes))))
+
 (define-key markdown-mode-map (kbd "C-c !") 'zerok/markdown-insert-datetime)
 
 ;; Render the current column next to the current line in the mode-line
 (column-number-mode +1)
+
+(setq zerok/persp-ring (make-ring 5))
+(setq zerok/persp-ring-idx 0)
+(defun zerok/add-to-persp-ring (_)
+  (ring-insert zerok/persp-ring persp-last-persp-name)
+  )
+(defun zerok/persp-previous ()
+  (interactive)
+  (let* ((previdx (ring-minus1 0 5))
+         (prevpersp (ring-ref zerok/persp-ring previdx)))
+    (message "Previous persp: %s" prevpersp)
+    (when (not (eq nil prevpersp))
+      (persp-switch prevpersp))))
+
+(add-hook 'persp-before-deactivate-functions 'zerok/add-to-persp-ring)
+(define-key 'persp-key-map (kbd "x") 'zerok/persp-previous)
