@@ -1,8 +1,9 @@
 (require 'package)
+(setq load-path (cons (expand-file-name "~/.emacs.d/custom") load-path))
 (package-initialize)
 (package-install 'use-package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-(load-file (expand-file-name "~/.emacs.d/tasklog.el"))
+(require 'tasklog)
 
 (setq inhibit-startup-screen t)
 
