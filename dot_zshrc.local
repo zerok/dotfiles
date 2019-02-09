@@ -37,7 +37,7 @@ precmd() {
 
 export PROMPT="%F{blue}$%F{none} %~/ "
 
-gpgconf --launch gpg-agent
+/usr/local/bin/gpg-agent --daemon
 export SSH_AUTH_SOCK=$HOME/.gnupg/S.gpg-agent.ssh
 { eval `ssh-agent`; ssh-add -A; } &>/dev/null
 
