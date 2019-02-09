@@ -4,6 +4,7 @@
 (package-install 'use-package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (require 'tasklog)
+(require 'zerok-org)
 
 (setq inhibit-startup-screen t)
 
