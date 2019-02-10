@@ -238,7 +238,10 @@
 (global-set-key (kbd "C-c o c") 'zerok/org/generate-note-filename)
 (global-set-key (kbd "C-c o m") 'org-match-sparse-tree)
 (add-hook 'org-mode-hook (lambda () (auto-fill-mode +1)))
-(add-hook 'markdown-mode-hook (lambda () (auto-fill-mode +1)))
+(add-hook 'markdown-mode-hook
+          (lambda ()
+            (auto-fill-mode +1)
+            (define-key markdown-mode-map (kbd "C-c !") 'zerok/markdown-insert-datetime)))
 
 (defun zerok/markdown-insert-datetime ()
   "Insert or overwrite a date under point with an
@@ -270,7 +273,6 @@ the current timezone."
          (hours (/ minutes 60)))
     (format "%s%02d:%02d" (if (>= hours 0) "+" "-") (abs hours) (abs restminutes))))
 
-(define-key markdown-mode-map (kbd "C-c !") 'zerok/markdown-insert-datetime)
 
 ;; Render the current column next to the current line in the mode-line
 (column-number-mode +1)
