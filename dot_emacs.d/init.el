@@ -41,6 +41,16 @@
 
 (global-set-key (kbd "C-c y l") 'zerok/yank-line)
 (global-set-key (kbd "C-c d l") 'zerok/duplicate-line)
+(global-set-key (kbd "C-c f p") 'find-file-at-point)
+
+;; kb helper functions
+(defun kb/search (search)
+  (interactive "sSearch: ")
+  (ripgrep-regexp search (expand-file-name "~/Documents/Notes")))
+
+(defun kb/write (term)
+  (interactive "sTerm: ")
+  (find-file (concat (expand-file-name "~/Documents/Notes/") term ".org")))
 
 ;; I tend to mistype C-x C-b instead of C-b quite a lot so I got rid
 ;; of the other view ;-)
@@ -53,6 +63,26 @@
       (call-process "/usr/local/bin/chezmoi" nil buf nil "apply" "-v")
       (display-buffer-pop-up-window buf nil)))
 
+(use-package hydra
+  :ensure t
+  :init
+  (progn
+    (global-set-key
+     (kbd "C-c n")
+     (defhydra hydra-kb (global-map "C-c n")
+       "Knowledge base"
+       ("s" kb/search "search")
+       ("w" kb/write "write")
+       ("q" nil)
+       ))))
+
+(use-package ledger-mode
+  :ensure t
+  :init
+  (custom-set-variables
+   '(ledger-binary-path "/usr/local/bin/ledger")
+   '(ledger-accounts-file (expand-file-name "~/Documents/finances/ledger.dat"))
+   ))
 
 (use-package helm
   :ensure t
