@@ -101,10 +101,13 @@ _l_: right    _d_: delete
 (use-package ledger-mode
   :ensure t
   :init
-  (custom-set-variables
-   '(ledger-binary-path "/usr/local/bin/ledger")
-   '(ledger-accounts-file (expand-file-name "~/Documents/finances/ledger.dat"))
-   ))
+  (progn
+    (custom-set-variables
+     '(ledger-binary-path "/usr/local/bin/ledger")
+     '(ledger-accounts-file (expand-file-name "~/Documents/finances/ledger.dat"))
+     )
+    (add-to-list 'auto-mode-alist `(,(expand-file-name "~/Documents/finances/.*\\.dat\\'") . ledger-mode))
+  )
 
 (use-package helm
   :ensure t
