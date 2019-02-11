@@ -63,6 +63,52 @@
       (call-process "/usr/local/bin/chezmoi" nil buf nil "apply" "-v")
       (display-buffer-pop-up-window buf nil)))
 
+(defun zerok/window-flip-up ()
+  (interactive)
+  (let ((above (windmove-find-other-window 'up))
+        (cb (window-buffer)))
+    (when (not (eq nil above))
+      (let ((aboveb (window-buffer above)))
+        (when (not (minibufferp aboveb))
+          (set-window-buffer above cb)
+          (set-window-buffer (selected-window) aboveb)
+          (select-window above))))))
+
+(defun zerok/window-flip-down ()
+  (interactive)
+  (let ((above (windmove-find-other-window 'down))
+        (cb (window-buffer)))
+    (when (not (eq nil above))
+      (let ((aboveb (window-buffer above)))
+        (when (not (minibufferp aboveb))
+          (set-window-buffer above cb)
+          (set-window-buffer (selected-window) aboveb)
+          (select-window above))))))
+
+(defun zerok/window-flip-right ()
+  (interactive)
+  (let ((right (windmove-find-other-window 'right))
+        (cb (window-buffer)))
+    (when (not (eq nil right))
+      (let ((rightb (window-buffer right)))
+        (when (not (minibufferp rightb))
+        (set-window-buffer right cb)
+        (set-window-buffer (selected-window) rightb)
+        (select-window right)
+        )))))
+
+(defun zerok/window-flip-left ()
+  (interactive)
+  (let ((right (windmove-find-other-window 'left))
+        (cb (window-buffer)))
+    (when (not (eq nil right))
+      (let ((rightb (window-buffer right)))
+        (when (not (minibufferp rightb))
+          (set-window-buffer right cb)
+          (set-window-buffer (selected-window) rightb)
+          (select-window right)
+          )))))
+
 (use-package hydra
   :ensure t
   :init
@@ -71,18 +117,22 @@
      (kbd "C-c w")
      (defhydra hydra-window (:hint nil)
        "
-^Focus^       ^Split^
-^^^^^^^--------    -------------
-_h_: left     _2_: up/down
-_j_: down     _3_: left/right
-_k_: up
-_l_: right    _d_: delete
+^Focus^     ^Split^          ^Flip^
+^^^^^^^--------  -------------  -------------
+_h_: left   _2_: up/down     _H_: flip left
+_j_: down   _3_: left/right  _J_: flip down
+_k_: up     _d_: delete      _K_: flip up
+_l_: right                 _L_: flip right
 
 "
        ("h" windmove-left)
        ("j" windmove-down)
        ("k" windmove-up)
        ("l" windmove-right)
+       ("H" zerok/window-flip-left)
+       ("L" zerok/window-flip-right)
+       ("K" zerok/window-flip-up)
+       ("J" zerok/window-flip-down)
        ("2" split-window-below)
        ("3" split-window-right)
        ("d" delete-window)
