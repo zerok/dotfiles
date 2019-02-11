@@ -141,6 +141,8 @@
                             (set (make-local-variable 'company-backends) '(company-go))))
   (setq company-begin-commands '(self-insert-command))
   ))
+(use-package rust-mode
+  :ensure t)
 (use-package ivy
   :ensure t
   :init
@@ -171,12 +173,12 @@
 
 (use-package persp-mode
   :ensure t
-  :config
+  :init
   (progn
     (setq persp-keymap-prefix (kbd "C-c x"))
-    (setq persp-nil-name "Home"))
-  :init
-  (persp-mode +1))
+    (setq persp-nil-name "Home")
+    (persp-mode +1)))
+
 
 (global-hl-line-mode 1)
 
