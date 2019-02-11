@@ -68,6 +68,28 @@
   :init
   (progn
     (global-set-key
+     (kbd "C-c w")
+     (defhydra hydra-window (:hint nil)
+       "
+^Focus^       ^Split^
+^^^^^^^--------    -------------
+_h_: left     _2_: up/down
+_j_: down     _3_: left/right
+_k_: up
+_l_: right    _d_: delete
+
+"
+       ("h" windmove-left)
+       ("j" windmove-down)
+       ("k" windmove-up)
+       ("l" windmove-right)
+       ("2" split-window-below)
+       ("3" split-window-right)
+       ("d" delete-window)
+       ("q" nil "Quit")
+       ))
+
+    (global-set-key
      (kbd "C-c n")
      (defhydra hydra-kb (global-map "C-c n")
        "Knowledge base"
