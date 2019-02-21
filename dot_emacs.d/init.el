@@ -5,6 +5,7 @@
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (require 'tasklog)
 (require 'zerok-org)
+(require 'zerok-persp)
 
 (setq inhibit-startup-screen t)
 
@@ -109,10 +110,26 @@
           (select-window right)
           )))))
 
+(use-package kubernetes
+  :ensure t
+  :init
+  (custom-set-variables '(kubernetes-kubectl-executable "/usr/local/bin/kubectl")))
+
+(use-package htmlize
+  :ensure t)
+
+(use-package emojify
+  :ensure t)
+
 (use-package hydra
   :ensure t
   :init
   (progn
+    (global-set-key
+     (kbd "C-c u")
+     (defhydra hydra-ui (:hint nil)
+       ("t" toggle-truncate-lines "Truncate lines")
+       ("q" nil "Quit")))
     (global-set-key
      (kbd "C-c w")
      (defhydra hydra-window (:hint nil)
@@ -147,6 +164,11 @@ _l_: right                 _L_: flip right
        ("w" kb/write "write")
        ("q" nil)
        ))))
+
+(use-package editorconfig
+  :ensure t
+  :config
+  (editorconfig-mode 1))
 
 (use-package ledger-mode
   :ensure t
@@ -246,15 +268,6 @@ _l_: right                 _L_: flip right
   (setq doom-modeline-icon t)
   (setq doom-modeline-height 25))
 
-(use-package persp-mode
-  :ensure t
-  :init
-  (progn
-    (setq persp-keymap-prefix (kbd "C-c x"))
-    (setq persp-nil-name "Home")
-    (persp-mode +1)))
-
-
 (global-hl-line-mode 1)
 
 (defun zerok/toggle-evil-mode ()
@@ -309,7 +322,7 @@ _l_: right                 _L_: flip right
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "nil" :family "Menlo")))))
+ '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 130 :width normal :foundry "nil" :family "Menlo")))))
 (defun zerok/setup-javascript-mode ()
   (setq tab-width 2)
   (setq js-indent-level 2)
@@ -384,18 +397,3 @@ the current timezone."
 ;; Render the current column next to the current line in the mode-line
 (column-number-mode +1)
 
-(setq zerok/persp-ring (make-ring 5))
-(setq zerok/persp-ring-idx 0)
-(defun zerok/add-to-persp-ring (_)
-  (ring-insert zerok/persp-ring persp-last-persp-name)
-  )
-(defun zerok/persp-previous ()
-  (interactive)
-  (let* ((previdx (ring-minus1 0 5))
-         (prevpersp (ring-ref zerok/persp-ring previdx)))
-    (message "Previous persp: %s" prevpersp)
-    (when (not (eq nil prevpersp))
-      (persp-switch prevpersp))))
-
-(add-hook 'persp-before-deactivate-functions 'zerok/add-to-persp-ring)
-(define-key 'persp-key-map (kbd "x") 'zerok/persp-previous)
