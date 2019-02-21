@@ -121,6 +121,10 @@
 (use-package emojify
   :ensure t)
 
+(defun text-scale-reset ()
+  (interactive)
+  (text-scale-mode -1))
+
 (use-package hydra
   :ensure t
   :init
@@ -129,6 +133,9 @@
      (kbd "C-c u")
      (defhydra hydra-ui (:hint nil)
        ("t" toggle-truncate-lines "Truncate lines")
+       ("[" text-scale-decrease "Font size-")
+       ("]" text-scale-increase "Font size+")
+       ("=" text-scale-reset "Reset font size")
        ("q" nil "Quit")))
     (global-set-key
      (kbd "C-c w")
