@@ -161,15 +161,6 @@ _l_: right                 _L_: flip right
        ("3" split-window-right)
        ("d" delete-window)
        ("q" nil "Quit")
-       ))
-
-    (global-set-key
-     (kbd "C-c n")
-     (defhydra hydra-kb (global-map "C-c n")
-       "Knowledge base"
-       ("s" kb/search "search")
-       ("w" kb/write "write")
-       ("q" nil)
        ))))
 
 (use-package editorconfig
