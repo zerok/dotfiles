@@ -1,4 +1,3 @@
-(require 'json)
 (require 'dash)
 (require 'helm)
 
@@ -23,8 +22,7 @@
                 (car (alist-get :offset item)))
         item))
 
-(defun datasphere-search (term)
-  (interactive "sTerm: ")
+(defun datasphere--search (term)
   (let ((result nil)
         (match nil))
     (with-temp-buffer
@@ -46,18 +44,43 @@
       )
     (when match
       (setq result (cons match result)))
-    (let ((selection (helm :sources (helm-build-sync-source "matches"
-                                      :candidates (-map 'datasphere--search-build-item result)
-                                      :fuzzy-match t)
-                           :buffer "*datasphere-search-result*")))
-      (when selection
-        (let ((path (car (alist-get :file selection)))
-              (offset (car (alist-get :offset selection))))
-          
-          (find-file path)
-          (when offset
-            (goto-char offset)
-            (org-show-set-visibility "local")))))))
+    result))
+
+(defun datasphere-search (term)
+  (interactive "sTerm: ")
+
+  (let* ((result (datasphere--search term))
+         (selection (helm :sources (helm-build-sync-source "matches"
+                                    :candidates (-map 'datasphere--search-build-item result)
+                                    :fuzzy-match t)
+                         :buffer "*datasphere-search-result*")))
+    (when selection
+      (let ((path (car (alist-get :file selection)))
+            (offset (car (alist-get :offset selection))))
+        
+        (find-file path)
+        (when offset
+          (goto-char offset)
+          (org-show-set-visibility "local"))))))
+
+(defun datasphere-write (term)
+  "The write command first does a search to suggest existing documents. The last item in that list will let you create a new document."
+  (interactive "sTerm: ")
+  (let* ((matches (datasphere--search term))
+         (newitem (cons (list :file (expand-file-name (format "~/Documents/Notes/%s.org" term))) nil))
+         (items (cons (cons (format "DIRECT: %s" (car (alist-get :file newitem))) newitem)
+                      (-map 'datasphere--search-build-item matches)))
+         (selection (helm :sources (helm-build-sync-source "matches"
+                                     :candidates items
+                                     :fuzzy-match t)
+                          :buffer "*datasphere-search-result*")))
+    (when selection
+      (let ((path (car (alist-get :file selection)))
+            (offset (car (alist-get :offset selection))))
+        (find-file path)
+        (when offset
+          (goto-char offset)
+          (org-show-set-visibility "local"))))))
 
 (use-package hydra
   :init
@@ -66,7 +89,7 @@
    (defhydra hydra-kb (global-map "C-c n")
      "Knowledge base"
      ("s" datasphere-search "search")
-     ("w" kb/write "write")
+     ("w" datasphere-write "write")
      ("q" nil)
      )))
 
