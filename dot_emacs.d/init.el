@@ -1,11 +1,15 @@
 (require 'package)
+(show-paren-mode 1)
 (setq load-path (cons (expand-file-name "~/.emacs.d/custom") load-path))
 (package-initialize)
 (package-install 'use-package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'load-path "/usr/local/opt/mu/share/emacs/site-lisp/mu/mu4e")
+(add-to-list 'load-path "/Users/zerok/.emacs.d/custom")
 (require 'tasklog)
 (require 'zerok-org)
 (require 'zerok-persp)
+(load-file (expand-file-name "~/src/gitlab.com/zerok/datasphere/elisp/datasphere.el"))
 
 (setq inhibit-startup-screen t)
 
@@ -20,7 +24,8 @@
 ;; ".#filename" files which are symlinks and therefore do more harm
 ;; than good. This disables that feature:
 (setq auto-save-default nil)
-(setenv "PATH" "~/bin:/usr/local/bin:/usr/bin")
+(setenv "PATH" "~/.cargo/bin:~/bin:/usr/local/bin:/usr/bin")
+(setenv "SSH_AUTH_SOCK" "/Users/zerok/.gnupg/S.gpg-agent.ssh")
 
 (defun zerok/yank-line ()
   (interactive)
@@ -110,6 +115,11 @@
           (select-window right)
           )))))
 
+(use-package expand-region
+  :ensure t
+  :bind ("C-=" . er/expand-region)
+  :bind ("C--" . er/contract-region))
+
 (use-package kubernetes
   :ensure t
   :init
@@ -120,6 +130,19 @@
 
 (use-package emojify
   :ensure t)
+
+(use-package tide
+  :ensure t
+  :custom (tide-node-executable "/usr/local/bin/node")
+  :after (typescript-mode company flycheck)
+  :hook ((typescript-mode . tide-setup)
+         (typescript-mode . tide-hl-identifier-mode)
+         (before-save . tide-format-before-save)))
+
+(use-package typescript-mode
+  :ensure t
+  :mode "\\.ts\\'"
+  :mode "\\.tsx\\'")
 
 (defun text-scale-reset ()
   (interactive)
@@ -168,6 +191,19 @@ _l_: right                 _L_: flip right
   :config
   (editorconfig-mode 1))
 
+(use-package flyspell
+  :ensure t)
+
+(use-package adoc-mode
+  :ensure t)
+
+(use-package restclient
+  :ensure t)
+
+(use-package flycheck
+  :ensure t
+  :init (global-flycheck-mode))
+
 (use-package ledger-mode
   :ensure t
   :init
@@ -177,7 +213,7 @@ _l_: right                 _L_: flip right
      '(ledger-accounts-file (expand-file-name "~/Documents/finances/ledger.dat"))
      )
     (add-to-list 'auto-mode-alist `(,(expand-file-name "~/Documents/finances/.*\\.dat\\'") . ledger-mode))
-  )
+  ))
 
 (use-package helm
   :ensure t
@@ -237,7 +273,19 @@ _l_: right                 _L_: flip right
   (setq company-begin-commands '(self-insert-command))
   ))
 (use-package rust-mode
-  :ensure t)
+  :ensure t
+  :custom (rust-rustfmt-bin (expand-file-name "~/.cargo/bin/rustfmt"))
+  :init
+  (setq rust-format-on-save t))
+(use-package racer
+  :ensure t
+  :after (rust-mode company)
+  :hook (rust-mode . racer-mode)
+  :hook (racer-mode-hook . company-mode)
+  :custom
+  (racer-rust-src-path (expand-file-name "~/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/src/rust/src"))
+  )
+
 (use-package ivy
   :ensure t
   :init
