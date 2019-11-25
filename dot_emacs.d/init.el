@@ -9,7 +9,8 @@
 (require 'tasklog)
 (require 'zerok-org)
 (require 'zerok-persp)
-(load-file (expand-file-name "~/src/gitlab.com/zerok/datasphere/elisp/datasphere.el"))
+(require 'rego-mode)
+(add-to-list 'auto-mode-alist `("\\.rego\\'" . rego-mode))
 
 (setq inhibit-startup-screen t)
 
@@ -24,8 +25,11 @@
 ;; ".#filename" files which are symlinks and therefore do more harm
 ;; than good. This disables that feature:
 (setq auto-save-default nil)
-(setenv "PATH" "~/.cargo/bin:~/bin:/usr/local/bin:/usr/bin")
+(setenv "PATH" "/Users/zerok/.cargo/bin:~/bin:/usr/local/bin:/usr/bin")
+(setq exec-path (append exec-path '("/Users/zerok/bin" "/Users/zerok/.cargo/bin")))
 (setenv "SSH_AUTH_SOCK" "/Users/zerok/.gnupg/S.gpg-agent.ssh")
+(setenv "RUST_BACKTRACE" "1")
+(setenv "RUST_LOG" "racer=trace")
 
 (defun zerok/yank-line ()
   (interactive)
@@ -128,6 +132,9 @@
 (use-package htmlize
   :ensure t)
 
+(use-package company-emoji
+  :ensure t)
+
 (use-package emojify
   :ensure t)
 
@@ -138,6 +145,16 @@
   :hook ((typescript-mode . tide-setup)
          (typescript-mode . tide-hl-identifier-mode)
          (before-save . tide-format-before-save)))
+
+(use-package eyebrowse
+  :ensure t
+  :config
+  (progn
+    (eyebrowse-mode +1)
+    (global-set-key (kbd "M-1") 'eyebrowse-switch-to-window-config-1)
+    (global-set-key (kbd "M-2") 'eyebrowse-switch-to-window-config-2)
+    (global-set-key (kbd "M-3") 'eyebrowse-switch-to-window-config-3)
+    (global-set-key (kbd "M-4") 'eyebrowse-switch-to-window-config-4)))
 
 (use-package typescript-mode
   :ensure t
@@ -161,6 +178,11 @@
        ("=" text-scale-reset "Reset font size")
        ("q" nil "Quit")))
     (global-set-key
+     (kbd "C-c f")
+     (defhydra hydra-ui (:hint nil)
+       ("r" zerok/rename-file "Rename file")
+       ("q" nil "Quit")))
+    (global-set-key
      (kbd "C-c w")
      (defhydra hydra-window (:hint nil)
        "
@@ -169,7 +191,8 @@
 _h_: left   _2_: up/down     _H_: flip left
 _j_: down   _3_: left/right  _J_: flip down
 _k_: up     _d_: delete      _K_: flip up
-_l_: right                 _L_: flip right
+_l_: right  _]_: enlarge (h) _L_: flip right
+            _[_: shrink (h)
 
 "
        ("h" windmove-left)
@@ -183,6 +206,9 @@ _l_: right                 _L_: flip right
        ("2" split-window-below)
        ("3" split-window-right)
        ("d" delete-window)
+       ("w" ace-window)
+       ("]" enlarge-window-horizontally)
+       ("[" shrink-window-horizontally)
        ("q" nil "Quit")
        ))))
 
@@ -220,6 +246,9 @@ _l_: right                 _L_: flip right
   :bind ("C-c s k" . 'helm-show-kill-ring)
   :init
   (helm-mode 1))
+
+(global-set-key (kbd "C-x b") 'helm-mini)
+(global-set-key (kbd "C-x C-b") 'helm-mini)
 (use-package magit
   :ensure t)
 (use-package company
@@ -241,17 +270,10 @@ _l_: right                 _L_: flip right
     (global-set-key (kbd "C-c j") 'windmove-down)
     (global-set-key (kbd "C-c k") 'windmove-up)))
 (use-package dracula-theme
+  :ensure t)
+(use-package monokai-pro-theme
   :ensure t
-  :init (load-theme 'dracula t))
-
-(setq-default evil-escape-key-sequence "jk")
-(use-package evil
-  :ensure t)
-(use-package evil-leader
-  :ensure t)
-(use-package evil-escape
-  :after (evil)
-  :ensure t)
+  :init (load-theme 'monokai-pro t))
 (use-package go-mode
   :ensure t
   :init (add-hook 'before-save-hook #'gofmt-before-save))
@@ -277,14 +299,37 @@ _l_: right                 _L_: flip right
   :custom (rust-rustfmt-bin (expand-file-name "~/.cargo/bin/rustfmt"))
   :init
   (setq rust-format-on-save t))
-(use-package racer
+(use-package lsp-mode
   :ensure t
-  :after (rust-mode company)
-  :hook (rust-mode . racer-mode)
-  :hook (racer-mode-hook . company-mode)
-  :custom
-  (racer-rust-src-path (expand-file-name "~/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/src/rust/src"))
+  :config (progn
+            (add-hook 'go-mode-hook #'lsp)
+            (add-hook 'rust-mode-hook #'lsp)))
+
+(custom-set-variables '(lsp-rust-rls-server-command (expand-file-name "~/.cargo/bin/rls")))
+(custom-set-variables '(lsp-report-if-no-buffer nil))
+(use-package lsp-ui
+  :ensure t
+  :config
+  (add-hook 'lsp-mode-hook #'lsp-ui-mode))
+
+;; Disable trace mode for lsp
+(setq lsp-server-trace nil)
+(setq lsp-lens-mode nil)
+(use-package company-lsp
+  :ensure t
+  :commands company-lsp
+  :config
+  (push 'company-lsp company-backends)
   )
+;; (use-package racer
+;;   :ensure t
+;;   :hook ((rust-mode . racer-mode)
+;;          (racer-mode . eldoc-mode)
+;;          (racer-mode . company-mode))
+;;   :config
+;;   (setq company-tooltip-align-annotations t)
+;;   :custom
+;;   (racer-rust-src-path (expand-file-name "~/.rustup/toolchains/nightly-x86_64-apple-darwin/lib/rustlib/src/rust/src")))
 
 (use-package ivy
   :ensure t
@@ -307,6 +352,10 @@ _l_: right                 _L_: flip right
 (use-package dockerfile-mode
   :ensure t)
 
+(use-package hcl-mode
+  :ensure t
+  )
+
 (use-package doom-modeline
   :ensure t
   :init
@@ -316,18 +365,8 @@ _l_: right                 _L_: flip right
 
 (global-hl-line-mode 1)
 
-(defun zerok/toggle-evil-mode ()
-  (interactive)
-  (if (and (boundp 'evil-mode) (symbol-value 'evil-mode))
-      (progn (message "Disabling evil-mode") (evil-mode -1) (evil-escape-mode -1))
-    (progn (message "Enabling evil-mode") (evil-mode 1) (evil-escape-mode 1))))
 
 (setq epg-gpg-program "/usr/local/MacGPG2/bin/gpg")
-
-;; I'm still trying to find my way through the world with the way
-;; Emacs normally handles shortcuts. As a last resort this should
-;; allow me to quickly enable evil mode if I need it:
-(global-set-key (kbd "C-c C-e")  'zerok/toggle-evil-mode)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -337,14 +376,11 @@ _l_: right                 _L_: flip right
  '(company-go-gocode-command "/Users/zerok/bin/gocode")
  '(custom-safe-themes
    (quote
-    ("274fa62b00d732d093fc3f120aca1b31a6bb484492f31081c1814a858e25c72e" "c74fff70a4cc37e2348dd083ae572c8b4baab4f6fb86adae5e0f2139a63e9a96" default)))
+    ("1d2f406a342499f0098f9388b87d05ec9b28ccb12ca548f4f5fa80ae368235b6" "274fa62b00d732d093fc3f120aca1b31a6bb484492f31081c1814a858e25c72e" "c74fff70a4cc37e2348dd083ae572c8b4baab4f6fb86adae5e0f2139a63e9a96" default)))
  '(epg-gpg-program "/usr/local/MacGPG2/bin/gpg")
  '(go-command "/usr/local/bin/go")
  '(gofmt-command (expand-file-name "~/bin/goimports"))
  '(ns-command-modifier (quote meta))
- '(package-selected-packages
-   (quote
-    (dockerfile-mode projectile avy ivy company-go go-mode company evil-escape evil-leader evil evil-mode dracula-theme use-package markdown-mode magit helm overcast-theme yaml-mode)))
  '(standard-indent 2))
 
 (setq-default indent-tabs-mode nil)
@@ -368,21 +404,21 @@ _l_: right                 _L_: flip right
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 130 :width normal :foundry "nil" :family "Menlo")))))
+ '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "nil" :family "Roboto Mono")))))
 (defun zerok/setup-javascript-mode ()
   (setq tab-width 2)
   (setq js-indent-level 2)
-  (custom-set-variables '(standard-indent 2)))
-
+  (custom-set-variables '(standard-indent 2))
+  (editorconfig-apply))
+(when (member "Apple Color Emoji" (font-family-list))
+  (set-fontset-font t 'unicode "Apple Color Emoji" nil 'prepend))
 (add-hook 'javascript-mode-hook 'zerok/setup-javascript-mode)
 (add-hook 'js-mode-hook 'zerok/setup-javascript-mode)
-
 (server-start)
 (custom-set-variables '(line-spacing 3))
 (global-set-key (kbd "C-c t") 'tasklog)
 
 (load-file (expand-file-name "~/.emacs.d/private-settings.el"))
-
 (use-package deft
   :ensure t
   :init
@@ -401,12 +437,11 @@ _l_: right                 _L_: flip right
   (let ((topic (read-file-name "Topic: " (expand-file-name "~/Documents/Notes/"))))
     (find-file topic)))
 
-(global-set-key (kbd "C-c o c") 'zerok/org/generate-note-filename)
+(global-set-key (kbd "C-c o c") 'org-capture)
 (global-set-key (kbd "C-c o m") 'org-match-sparse-tree)
 (add-hook 'org-mode-hook (lambda () (auto-fill-mode +1)))
 (add-hook 'markdown-mode-hook
           (lambda ()
-            (auto-fill-mode +1)
             (define-key markdown-mode-map (kbd "C-c !") 'zerok/markdown-insert-datetime)))
 
 (defun zerok/markdown-insert-datetime ()
@@ -443,3 +478,60 @@ the current timezone."
 ;; Render the current column next to the current line in the mode-line
 (column-number-mode +1)
 
+(use-package indent-guide
+  :ensure t)
+(setq highlight-indent-guide t)
+(set-face-background 'indent-guide-face "dimgray")
+
+(setq org-link-abbrev-alist
+      '(("ds"  . "file:///Users/zerok/Documents/Notes/")
+        ("omap"      . "http://nominatim.openstreetmap.org/search?q=%s&polygon=1")))
+
+(setq python-environment-virtualenv (list "/usr/local/bin/python3"  "-m"  "venv"))
+(use-package company-jedi
+  :ensure t)
+
+(defun zerok/python-setup ()
+  (set (make-local-variable 'company-backends) '(company-jedi)))
+(add-hook 'python-mode-hook #'zerok/python-setup)
+(setq python-shell-interpreter "/opt/local/bin/python")
+(setq flycheck-python-pycompile-executable "/opt/local/bin/python")
+(setq backup-directory-alist `(("." . "~/.saves")))
+
+(use-package iflipb
+  :ensure t
+  :init
+  (global-set-key (kbd "M-[") 'iflipb-next-buffer)
+  (global-set-key (kbd "M-]") 'iflipb-previous-buffer)
+  )
+
+(use-package polymode
+  :ensure t)
+
+
+(add-to-list 'auto-mode-alist '("Portfile" . tcl-mode))
+(add-to-list 'auto-mode-alist '("\\.tf\\'" . hcl-mode))
+
+(defun zerok/base64-encode-region-no-break ()
+  (interactive)
+  (base64-encode-region (mark) (point) t))
+
+(display-line-numbers-mode 1)
+(setq display-line-numbers 'relative)
+
+;(load-file (expand-file-name "~/src/gitlab.com/zerok/datasphere/elisp/datasphere.el"))
+
+(use-package docker
+  :ensure t)
+
+(use-package auto-minor-mode
+  :ensure t)
+
+(use-package yasnippet
+  :ensure t)
+
+;; Add better way to work with undos which is bound to C-x u:
+(use-package undo-tree
+  :ensure t)
+
+(require 'zerok-evil)

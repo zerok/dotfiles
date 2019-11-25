@@ -9,4 +9,20 @@ matching a certain pattern."
     (-filter filterfn
              (-partition-all-in-steps numfields numfields fieldseq)))))
 
+(org-babel-do-load-languages 'org-babel-load-languages
+                             '((emacs-lisp . t)
+                               (python . t)
+                               (sql . t)
+                               (shell . t)))
+
+(defun zerok/org-get-daily-file ()
+  (progn
+    (find-file (expand-file-name (format "~/Documents/Notes/daily/%s.org" (format-time-string "%Y-%m-%d"))))
+    (goto-char (point-max))
+    ))
+
+
+(setq org-capture-templates
+      '(("j" "Journal" entry (function zerok/org-get-daily-file))))
+
 (provide 'zerok-org)
