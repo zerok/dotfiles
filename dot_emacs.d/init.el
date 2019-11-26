@@ -269,11 +269,18 @@ _l_: right  _]_: enlarge (h) _L_: flip right
     (global-set-key (kbd "C-c h") 'windmove-left)
     (global-set-key (kbd "C-c j") 'windmove-down)
     (global-set-key (kbd "C-c k") 'windmove-up)))
+
+;; Install a couple of themes:
 (use-package dracula-theme
   :ensure t)
-(use-package monokai-pro-theme
+(use-package spacemacs-theme
   :ensure t
-  :init (load-theme 'monokai-pro t))
+  :init (load-theme 'spacemacs-dark t))
+(use-package monokai-pro-theme
+  :ensure t)
+(use-package darktooth-theme
+  :ensure t)
+
 (use-package go-mode
   :ensure t
   :init (add-hook 'before-save-hook #'gofmt-before-save))
@@ -299,28 +306,10 @@ _l_: right  _]_: enlarge (h) _L_: flip right
   :custom (rust-rustfmt-bin (expand-file-name "~/.cargo/bin/rustfmt"))
   :init
   (setq rust-format-on-save t))
-(use-package lsp-mode
-  :ensure t
-  :config (progn
-            (add-hook 'go-mode-hook #'lsp)
-            (add-hook 'rust-mode-hook #'lsp)))
 
-(custom-set-variables '(lsp-rust-rls-server-command (expand-file-name "~/.cargo/bin/rls")))
-(custom-set-variables '(lsp-report-if-no-buffer nil))
-(use-package lsp-ui
-  :ensure t
-  :config
-  (add-hook 'lsp-mode-hook #'lsp-ui-mode))
+(use-package eglot
+  :ensure t)
 
-;; Disable trace mode for lsp
-(setq lsp-server-trace nil)
-(setq lsp-lens-mode nil)
-(use-package company-lsp
-  :ensure t
-  :commands company-lsp
-  :config
-  (push 'company-lsp company-backends)
-  )
 ;; (use-package racer
 ;;   :ensure t
 ;;   :hook ((rust-mode . racer-mode)
@@ -339,9 +328,11 @@ _l_: right  _]_: enlarge (h) _L_: flip right
   :bind (
 	 ("C-s" . swiper)
 	 ))
+
 (use-package avy
   :ensure t
   :bind ("C-c c" . avy-goto-char))
+
 (use-package projectile
   :ensure t
   :init
@@ -349,6 +340,7 @@ _l_: right  _]_: enlarge (h) _L_: flip right
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
   (define-key projectile-mode-map (kbd "M-t") 'projectile-find-file)
   )
+
 (use-package dockerfile-mode
   :ensure t)
 
@@ -356,12 +348,22 @@ _l_: right  _]_: enlarge (h) _L_: flip right
   :ensure t
   )
 
-(use-package doom-modeline
+;; (use-package doom-modeline
+;;   :ensure t
+;;   :init
+;;   (doom-modeline-mode 1)
+;;   (setq doom-modeline-icon t)
+;;   (setq doom-modeline-height 25))
+(use-package spaceline
   :ensure t
-  :init
-  (doom-modeline-mode 1)
-  (setq doom-modeline-icon t)
-  (setq doom-modeline-height 25))
+  :config (progn
+    (require 'spaceline-config)
+    (spaceline-emacs-theme)
+    (spaceline-toggle-evil-state-on)
+    (spaceline-helm-mode +1)
+    ))
+
+(setq powerline-height 30)
 
 (global-hl-line-mode 1)
 
@@ -404,7 +406,15 @@ _l_: right  _]_: enlarge (h) _L_: flip right
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "nil" :family "Roboto Mono")))))
+ '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "nil" :family "Roboto Mono"))))
+ '(mode-line ((t (:background "#2d2d2d" :foreground "#b2b2b2" :box (:line-width 1 :color "#5d4d7a")))))
+ '(mode-line-inactive ((t (:background "#383838" :foreground "#b2b2b2" :box (:line-width 1 :color "#5d4d7a")))))
+ '(powerline-active0 ((t (:background "#3b3b41"))))
+ '(powerline-active1 ((t (:background "#725fa0" :foreground "#b2b2b2"))))
+ '(powerline-active2 ((t (:background "#725fa0" :foreground "#b2b2b2"))))
+ '(powerline-inactive1 ((t (:background "#2a2a2a" :foreground "#b2b2b2"))))
+ '(powerline-inactive2 ((t (:background "#3b3b41" :foreground "#b2b2b2")))))
+
 (defun zerok/setup-javascript-mode ()
   (setq tab-width 2)
   (setq js-indent-level 2)
