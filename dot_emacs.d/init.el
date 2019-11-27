@@ -429,14 +429,6 @@ _l_: right  _]_: enlarge (h) _L_: flip right
 (global-set-key (kbd "C-c t") 'tasklog)
 
 (load-file (expand-file-name "~/.emacs.d/private-settings.el"))
-(use-package deft
-  :ensure t
-  :init
-  (setq deft-use-filename-as-title t)
-  (setq deft-recursive t)
-  (setq deft-extensions '("md" "org"))
-  (setq deft-default-extension "org")
-  (setq deft-directory "~/Documents/Notes"))
 
 ;; OrgMode setup
 (setq org-agenda-files '("~/Documents/Notes"))
