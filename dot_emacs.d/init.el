@@ -284,23 +284,7 @@ _l_: right  _]_: enlarge (h) _L_: flip right
 (use-package go-mode
   :ensure t
   :init (add-hook 'before-save-hook #'gofmt-before-save))
-(use-package company-go
-  :ensure t
-  :after (company go-mode)
-  :init
-  (progn
-    (setenv "GO111MODULE" "on")
-    (setenv "GOPATH" "$HOME/" t)
-  (custom-set-variables
-   '(company-go-gocode-command "/Users/zerok/bin/gocode")
-   '(gofmt-command "/Users/zerok/bin/goimports")
-   '(go-command "/usr/local/bin/go")
-   '(godef-command "/Users/zerok/bin/godef")
-   )
-  (add-hook 'go-mode-hook (lambda ()
-                            (set (make-local-variable 'company-backends) '(company-go))))
-  (setq company-begin-commands '(self-insert-command))
-  ))
+
 (use-package rust-mode
   :ensure t
   :custom (rust-rustfmt-bin (expand-file-name "~/.cargo/bin/rustfmt"))
@@ -308,7 +292,11 @@ _l_: right  _]_: enlarge (h) _L_: flip right
   (setq rust-format-on-save t))
 
 (use-package eglot
-  :ensure t)
+  :ensure t
+  :config
+  (add-hook 'go-mode-hook 'eglot-ensure)
+  )
+
 
 ;; (use-package racer
 ;;   :ensure t
@@ -335,11 +323,26 @@ _l_: right  _]_: enlarge (h) _L_: flip right
 
 (use-package projectile
   :ensure t
-  :init
+  :config
   (projectile-mode +1)
+  (setq projectile-enable-caching t)
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
   (define-key projectile-mode-map (kbd "M-t") 'projectile-find-file)
-  )
+
+  ;; eglot and others are using the newish project.el to detect the
+  ;; current project's root directory. Sadly, this seems to only work
+  ;; for VCS'd projects and doesn't detect projectile files. This
+  ;; little helper fixes that.
+  ;;
+  ;; This solution is based on https://raw.githubusercontent.com/Khady/emacs.d/master/config.org
+  (defun zerok//projectile-project-find-function (dir)
+    (let ((root (projectile-project-root dir)))
+      (if root
+          (cons 'transient root)
+        nil)))
+
+  (with-eval-after-load 'project
+    (add-to-list 'project-find-functions 'zerok//projectile-project-find-function)))
 
 (use-package dockerfile-mode
   :ensure t)
