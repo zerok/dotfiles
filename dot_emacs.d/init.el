@@ -21,6 +21,10 @@
 ;; Emacs should start in all its glory:
 (toggle-frame-maximized)
 
+;; New in Emacs 27 is an automatic mode that disables some modes that
+;; slow Emacs down if a very large file is opened.
+(global-so-long-mode +1)
+
 ;; Emacs by default auto-saves files when visiting them. It creates
 ;; ".#filename" files which are symlinks and therefore do more harm
 ;; than good. This disables that feature:
