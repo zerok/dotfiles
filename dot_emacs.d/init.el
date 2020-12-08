@@ -1,16 +1,16 @@
 (require 'package)
 (show-paren-mode 1)
 (setq load-path (cons (expand-file-name "~/.emacs.d/custom") load-path))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
 (package-install 'use-package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-(add-to-list 'load-path "/usr/local/opt/mu/share/emacs/site-lisp/mu/mu4e")
+
 (add-to-list 'load-path "/Users/zerok/.emacs.d/custom")
-(require 'tasklog)
+;(require 'tasklog)
 (require 'zerok-org)
-(require 'zerok-persp)
-(require 'rego-mode)
-(add-to-list 'auto-mode-alist `("\\.rego\\'" . rego-mode))
+;(require 'zerok-persp)
+;(require 'rego-mode)
+;(add-to-list 'auto-mode-alist `("\\.rego\\'" . rego-mode))
 
 (setq inhibit-startup-screen t)
 
@@ -29,11 +29,9 @@
 ;; ".#filename" files which are symlinks and therefore do more harm
 ;; than good. This disables that feature:
 (setq auto-save-default nil)
-(setenv "PATH" "/Users/zerok/.cargo/bin:~/bin:/usr/local/bin:/usr/bin")
-(setq exec-path (append exec-path '("/Users/zerok/bin" "/Users/zerok/.cargo/bin")))
+(setenv "PATH" "/Users/zerok/.local/bin:/Users/zerok/.cargo/bin:~/bin:/usr/local/bin:/usr/bin")
+(setq exec-path (append exec-path '("/Users/zerok/bin" "/Users/zerok/.local/bin" "/Users/zerok/.cargo/bin")))
 (setenv "SSH_AUTH_SOCK" "/Users/zerok/.gnupg/S.gpg-agent.ssh")
-(setenv "RUST_BACKTRACE" "1")
-(setenv "RUST_LOG" "racer=trace")
 
 (defun zerok/yank-line ()
   (interactive)
@@ -123,117 +121,46 @@
           (select-window right)
           )))))
 
-(use-package expand-region
-  :ensure t
-  :bind ("C-=" . er/expand-region)
-  :bind ("C--" . er/contract-region))
+;(use-package expand-region
+;  :ensure t
+;  :bind ("C-=" . er/expand-region)
+;  :bind ("C--" . er/contract-region))
 
-(use-package kubernetes
-  :ensure t
-  :init
-  (custom-set-variables '(kubernetes-kubectl-executable "/usr/local/bin/kubectl")))
-
-(use-package htmlize
-  :ensure t)
-
-(use-package company-emoji
-  :ensure t)
-
-(use-package emojify
-  :ensure t)
-
-(use-package tide
-  :ensure t
-  :custom (tide-node-executable "/usr/local/bin/node")
-  :after (typescript-mode company flycheck)
-  :hook ((typescript-mode . tide-setup)
-         (typescript-mode . tide-hl-identifier-mode)
-         (before-save . tide-format-before-save)))
-
-(use-package eyebrowse
-  :ensure t
-  :config
-  (progn
-    (eyebrowse-mode +1)
-    (global-set-key (kbd "M-1") 'eyebrowse-switch-to-window-config-1)
-    (global-set-key (kbd "M-2") 'eyebrowse-switch-to-window-config-2)
-    (global-set-key (kbd "M-3") 'eyebrowse-switch-to-window-config-3)
-    (global-set-key (kbd "M-4") 'eyebrowse-switch-to-window-config-4)))
-
-(use-package typescript-mode
-  :ensure t
-  :mode "\\.ts\\'"
-  :mode "\\.tsx\\'")
+;(use-package kubernetes
+;  :ensure t
+;  :init
+;  (custom-set-variables '(kubernetes-kubectl-executable "/usr/local/bin/kubectl")))
+;
+;(use-package htmlize
+;  :ensure t)
+;
+;(use-package emojify
+;  :ensure t)
+;
+;(use-package eyebrowse
+;  :ensure t
+;  :config
+;  (progn
+;    (eyebrowse-mode +1)
+;    (global-set-key (kbd "M-1") 'eyebrowse-switch-to-window-config-1)
+;    (global-set-key (kbd "M-2") 'eyebrowse-switch-to-window-config-2)
+;    (global-set-key (kbd "M-3") 'eyebrowse-switch-to-window-config-3)
+;    (global-set-key (kbd "M-4") 'eyebrowse-switch-to-window-config-4)))
+;
+;(use-package typescript-mode
+;  :ensure t
+;  :mode "\\.ts\\'"
+;  :mode "\\.tsx\\'")
 
 (defun text-scale-reset ()
   (interactive)
   (text-scale-mode -1))
 
-(use-package hydra
-  :ensure t
-  :init
-  (progn
-    (global-set-key
-     (kbd "C-c u")
-     (defhydra hydra-ui (:hint nil)
-       ("t" toggle-truncate-lines "Truncate lines")
-       ("[" text-scale-decrease "Font size-")
-       ("]" text-scale-increase "Font size+")
-       ("=" text-scale-reset "Reset font size")
-       ("q" nil "Quit")))
-    (global-set-key
-     (kbd "C-c f")
-     (defhydra hydra-ui (:hint nil)
-       ("r" zerok/rename-file "Rename file")
-       ("q" nil "Quit")))
-    (global-set-key
-     (kbd "C-c w")
-     (defhydra hydra-window (:hint nil)
-       "
-^Focus^     ^Split^          ^Flip^
-^^^^^^^--------  -------------  -------------
-_h_: left   _2_: up/down     _H_: flip left
-_j_: down   _3_: left/right  _J_: flip down
-_k_: up     _d_: delete      _K_: flip up
-_l_: right  _]_: enlarge (h) _L_: flip right
-            _[_: shrink (h)
-
-"
-       ("h" windmove-left)
-       ("j" windmove-down)
-       ("k" windmove-up)
-       ("l" windmove-right)
-       ("H" zerok/window-flip-left)
-       ("L" zerok/window-flip-right)
-       ("K" zerok/window-flip-up)
-       ("J" zerok/window-flip-down)
-       ("2" split-window-below)
-       ("3" split-window-right)
-       ("d" delete-window)
-       ("w" ace-window)
-       ("]" enlarge-window-horizontally)
-       ("[" shrink-window-horizontally)
-       ("q" nil "Quit")
-       ))))
 
 (use-package editorconfig
   :ensure t
   :config
   (editorconfig-mode 1))
-
-(use-package flyspell
-  :ensure t)
-
-(use-package adoc-mode
-  :ensure t)
-
-(use-package restclient
-  :ensure t)
-
-(use-package flycheck
-  :ensure t
-  :init (global-flycheck-mode))
-
 (use-package ledger-mode
   :ensure t
   :init
@@ -253,12 +180,16 @@ _l_: right  _]_: enlarge (h) _L_: flip right
 
 (global-set-key (kbd "C-x b") 'helm-mini)
 (global-set-key (kbd "C-x C-b") 'helm-mini)
+
 (use-package magit
   :ensure t)
+
 (use-package company
   :ensure t
   :init
   (add-hook 'after-init-hook 'global-company-mode))
+(setq company-minimum-prefix-length 1
+      company-idle-delay 0.0) ;; default is 0.2
 
 (use-package windmove
   :ensure t
@@ -276,50 +207,25 @@ _l_: right  _]_: enlarge (h) _L_: flip right
 
 ;; Install a couple of themes:
 (use-package dracula-theme
-  :ensure t)
-(use-package spacemacs-theme
   :ensure t
-  :init (load-theme 'spacemacs-dark t))
-(use-package monokai-pro-theme
-  :ensure t)
-(use-package darktooth-theme
-  :ensure t)
+  :init (load-theme 'dracula t))
 
 (use-package go-mode
   :ensure t
   :init (add-hook 'before-save-hook #'gofmt-before-save))
 
+(add-hook 'go-mode-hook 'yas-minor-mode)
 (use-package rust-mode
+  :ensure t)
+
+(use-package lsp-mode
   :ensure t
-  :custom (rust-rustfmt-bin (expand-file-name "~/.cargo/bin/rustfmt"))
-  :init
-  (setq rust-format-on-save t))
+  :hook (rust-mode . lsp)
+  :hook (go-mode . lsp))
 
-(use-package eglot
-  :ensure t
-  :config
-  (add-hook 'go-mode-hook 'eglot-ensure)
-  )
-
-
-;; (use-package racer
-;;   :ensure t
-;;   :hook ((rust-mode . racer-mode)
-;;          (racer-mode . eldoc-mode)
-;;          (racer-mode . company-mode))
-;;   :config
-;;   (setq company-tooltip-align-annotations t)
-;;   :custom
-;;   (racer-rust-src-path (expand-file-name "~/.rustup/toolchains/nightly-x86_64-apple-darwin/lib/rustlib/src/rust/src")))
-
-(use-package ivy
-  :ensure t
-  :init
-  (setq counsel-fzf-cmd "/usr/local/bin/fzf")
-  (require 'counsel)
-  :bind (
-	 ("C-s" . swiper)
-	 ))
+(setq lsp-prefer-capf t)
+(setq lsp-completion-provider :capf)
+(setq lsp-completion-enable t)
 
 (use-package avy
   :ensure t
@@ -332,48 +238,28 @@ _l_: right  _]_: enlarge (h) _L_: flip right
   (setq projectile-enable-caching t)
   (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
   (define-key projectile-mode-map (kbd "M-t") 'projectile-find-file)
-
-  ;; eglot and others are using the newish project.el to detect the
-  ;; current project's root directory. Sadly, this seems to only work
-  ;; for VCS'd projects and doesn't detect projectile files. This
-  ;; little helper fixes that.
-  ;;
-  ;; This solution is based on https://raw.githubusercontent.com/Khady/emacs.d/master/config.org
-  (defun zerok//projectile-project-find-function (dir)
-    (let ((root (projectile-project-root dir)))
-      (if root
-          (cons 'transient root)
-        nil)))
-
-  (with-eval-after-load 'project
-    (add-to-list 'project-find-functions 'zerok//projectile-project-find-function)))
-
-(use-package dockerfile-mode
-  :ensure t)
-
-(use-package hcl-mode
-  :ensure t
   )
 
-;; (use-package doom-modeline
-;;   :ensure t
-;;   :init
-;;   (doom-modeline-mode 1)
-;;   (setq doom-modeline-icon t)
-;;   (setq doom-modeline-height 25))
-(use-package spaceline
-  :ensure t
-  :config (progn
-    (require 'spaceline-config)
-    (spaceline-emacs-theme)
-    (spaceline-toggle-evil-state-on)
-    (spaceline-helm-mode +1)
-    ))
+;(use-package dockerfile-mode
+;  :ensure t)
+;
+;(use-package hcl-mode
+;  :ensure t
+;  )
+
+
+;(use-package spaceline
+;  :ensure t
+;  :config (progn
+;    (require 'spaceline-config)
+;    (spaceline-emacs-theme)
+;    (spaceline-toggle-evil-state-on)
+;    (spaceline-helm-mode +1)
+;    ))
 
 (setq powerline-height 30)
 
 (global-hl-line-mode 1)
-
 
 (setq epg-gpg-program "/usr/local/MacGPG2/bin/gpg")
 
@@ -382,15 +268,21 @@ _l_: right  _]_: enlarge (h) _L_: flip right
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(company-go-gocode-command "/Users/zerok/bin/gocode")
  '(custom-safe-themes
-   (quote
-    ("1d2f406a342499f0098f9388b87d05ec9b28ccb12ca548f4f5fa80ae368235b6" "274fa62b00d732d093fc3f120aca1b31a6bb484492f31081c1814a858e25c72e" "c74fff70a4cc37e2348dd083ae572c8b4baab4f6fb86adae5e0f2139a63e9a96" default)))
+   '("24714e2cb4a9d6ec1335de295966906474fdb668429549416ed8636196cb1441" "1d2f406a342499f0098f9388b87d05ec9b28ccb12ca548f4f5fa80ae368235b6" "274fa62b00d732d093fc3f120aca1b31a6bb484492f31081c1814a858e25c72e" "c74fff70a4cc37e2348dd083ae572c8b4baab4f6fb86adae5e0f2139a63e9a96" default))
  '(epg-gpg-program "/usr/local/MacGPG2/bin/gpg")
  '(go-command "/usr/local/bin/go")
  '(gofmt-command (expand-file-name "~/bin/goimports"))
- '(ns-command-modifier (quote meta))
- '(standard-indent 2))
+ '(kubernetes-kubectl-executable "/usr/local/bin/kubectl")
+ '(ledger-accounts-file
+   (expand-file-name "~/Documents/finances/ledger/index.ledger"))
+ '(ledger-binary-path "/usr/local/bin/ledger")
+ '(line-spacing 3)
+ '(ns-command-modifier 'meta)
+ '(package-selected-packages
+   '(rego-mode ninja-mode adoc-mode iflipb yaml-mode hcl-mode avy racer undo-tree yasnippet company-jedi evil use-package projectile evil-org evil-leader evil-escape evil-commentary dracula-theme))
+ '(standard-indent 2)
+ '(tasklog-directory "/Users/zerok/Dropbox (Netconomy)/worklogs/tasks/"))
 
 (setq-default indent-tabs-mode nil)
 
@@ -413,9 +305,7 @@ _l_: right  _]_: enlarge (h) _L_: flip right
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "nil" :family "Roboto Mono"))))
- '(mode-line ((t (:background "#2d2d2d" :foreground "#b2b2b2" :box (:line-width 1 :color "#5d4d7a")))))
- '(mode-line-inactive ((t (:background "#383838" :foreground "#b2b2b2" :box (:line-width 1 :color "#5d4d7a")))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "#282a36" :foreground "#f8f8f2" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 140 :width normal :foundry "nil" :family "Menlo"))))
  '(powerline-active0 ((t (:background "#3b3b41"))))
  '(powerline-active1 ((t (:background "#725fa0" :foreground "#b2b2b2"))))
  '(powerline-active2 ((t (:background "#725fa0" :foreground "#b2b2b2"))))
@@ -432,7 +322,7 @@ _l_: right  _]_: enlarge (h) _L_: flip right
 (add-hook 'javascript-mode-hook 'zerok/setup-javascript-mode)
 (add-hook 'js-mode-hook 'zerok/setup-javascript-mode)
 (server-start)
-(custom-set-variables '(line-spacing 3))
+
 (global-set-key (kbd "C-c t") 'tasklog)
 
 (load-file (expand-file-name "~/.emacs.d/private-settings.el"))
@@ -451,6 +341,7 @@ _l_: right  _]_: enlarge (h) _L_: flip right
 (add-hook 'org-mode-hook (lambda () (auto-fill-mode +1)))
 (add-hook 'markdown-mode-hook
           (lambda ()
+            (setq fill-column 79)
             (define-key markdown-mode-map (kbd "C-c !") 'zerok/markdown-insert-datetime)))
 
 (defun zerok/markdown-insert-datetime ()
@@ -487,10 +378,10 @@ the current timezone."
 ;; Render the current column next to the current line in the mode-line
 (column-number-mode +1)
 
-(use-package indent-guide
-  :ensure t)
-(setq highlight-indent-guide t)
-(set-face-background 'indent-guide-face "dimgray")
+;(use-package indent-guide
+;  :ensure t)
+;(setq highlight-indent-guide t)
+;(set-face-background 'indent-guide-face "dimgray")
 
 (setq org-link-abbrev-alist
       '(("ds"  . "file:///Users/zerok/Documents/Notes/")
@@ -507,17 +398,6 @@ the current timezone."
 (setq flycheck-python-pycompile-executable "/opt/local/bin/python")
 (setq backup-directory-alist `(("." . "~/.saves")))
 
-(use-package iflipb
-  :ensure t
-  :init
-  (global-set-key (kbd "M-[") 'iflipb-next-buffer)
-  (global-set-key (kbd "M-]") 'iflipb-previous-buffer)
-  )
-
-(use-package polymode
-  :ensure t)
-
-
 (add-to-list 'auto-mode-alist '("Portfile" . tcl-mode))
 (add-to-list 'auto-mode-alist '("\\.tf\\'" . hcl-mode))
 
@@ -526,21 +406,40 @@ the current timezone."
   (base64-encode-region (mark) (point) t))
 
 (display-line-numbers-mode 1)
-(setq display-line-numbers 'relative)
 
 ;(load-file (expand-file-name "~/src/gitlab.com/zerok/datasphere/elisp/datasphere.el"))
 
-(use-package docker
-  :ensure t)
-
-(use-package auto-minor-mode
-  :ensure t)
+;(use-package docker
+;  :ensure t)
 
 (use-package yasnippet
   :ensure t)
+
+;(use-package vue-mode
+;  :ensure t)
+;(setq mmm-js-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
+;(setq mmm-typescript-mode-enter-hook (lambda () (setq syntax-ppss-table nil)))
+
 
 ;; Add better way to work with undos which is bound to C-x u:
 (use-package undo-tree
   :ensure t)
 
 (require 'zerok-evil)
+
+(setq fill-column 79)
+
+(defun zerok/magit-open-link ()
+  "Opens the last http/https link mentioned in the current buffer"
+  (interactive)
+  (save-excursion
+    (goto-char (point-max))
+    (beginning-of-line)
+    (while (not (equal (point-min) (point)))
+      (forward-line -1)
+      (beginning-of-line)
+      (let ((line (buffer-substring (point) (line-end-position))))
+        (unless (eq nil (string-match "remote: +\\(https://[^[:space:]]+\\)" line))
+          (browse-url (match-string 1 line)))
+        )
+      )))

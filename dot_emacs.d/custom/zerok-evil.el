@@ -1,6 +1,11 @@
 (use-package evil
   :ensure t
-  :init (evil-mode +1))
+  :config
+
+  (evil-mode +1)
+  (add-to-list 'evil-emacs-state-modes 'ledger-report-mode)
+  (add-to-list 'evil-emacs-state-modes 'ledger-check-mode)
+  )
 
 (use-package evil-org
   :ensure t
@@ -10,10 +15,13 @@
   :ensure t)
 
 (use-package evil-commentary
-  :ensure t)
+  :ensure t
+  :custom
+  (evil-leader/leader "\\"))
 
 (evil-mode +1)
-(evil-leader-mode +1)
+(global-evil-leader-mode)
+(evil-leader/set-key "b" 'switch-to-buffer)
 
 (defun zerok/rename-file (new)
   (interactive "FNew path")
