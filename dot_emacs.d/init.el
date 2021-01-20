@@ -54,6 +54,10 @@
 (global-set-key (kbd "C-c y l") 'zerok/yank-line)
 (global-set-key (kbd "C-c d l") 'zerok/duplicate-line)
 (global-set-key (kbd "C-c f p") 'find-file-at-point)
+(global-set-key (kbd "C-x C-d") 'nil)
+
+(use-package ripgrep
+  :ensure t)
 
 ;; kb helper functions
 (defun kb/search (search)
@@ -190,6 +194,11 @@
   (add-hook 'after-init-hook 'global-company-mode))
 (setq company-minimum-prefix-length 1
       company-idle-delay 0.0) ;; default is 0.2
+
+(use-package company-emoji
+  :ensure t
+  :init
+  (add-to-list 'company-backends 'company-emoji))
 
 (use-package windmove
   :ensure t
