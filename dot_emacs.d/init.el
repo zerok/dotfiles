@@ -392,10 +392,6 @@ the current timezone."
 ;(setq highlight-indent-guide t)
 ;(set-face-background 'indent-guide-face "dimgray")
 
-(setq org-link-abbrev-alist
-      '(("ds"  . "file:///Users/zerok/Documents/Notes/")
-        ("omap"      . "http://nominatim.openstreetmap.org/search?q=%s&polygon=1")))
-
 (setq python-environment-virtualenv (list "/usr/local/bin/python3"  "-m"  "venv"))
 (use-package company-jedi
   :ensure t)
@@ -444,11 +440,19 @@ the current timezone."
   (save-excursion
     (goto-char (point-max))
     (beginning-of-line)
-    (while (not (equal (point-min) (point)))
+    (setq-local found nil)
+    (while (and (not found) (not (equal (point-min) (point))))
       (forward-line -1)
       (beginning-of-line)
       (let ((line (buffer-substring (point) (line-end-position))))
         (unless (eq nil (string-match "remote: +\\(https://[^[:space:]]+\\)" line))
-          (browse-url (match-string 1 line)))
+          (browse-url (match-string 1 line))
+          (setq found t))
         )
       )))
+
+
+(when (file-exists-p (expand-file-name "~/datasphere/emacs/datasphere.el"))
+  (progn
+    (load-file (expand-file-name "~/datasphere/emacs/datasphere.el"))
+    (require 'datasphere)))
