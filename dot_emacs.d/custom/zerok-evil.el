@@ -22,6 +22,7 @@
 (evil-mode +1)
 (global-evil-leader-mode)
 (evil-leader/set-key "b" 'switch-to-buffer)
+(evil-leader/set-key "\\" 'avy-goto-char)
 
 (defun zerok/rename-file (new)
   (interactive "FNew path")
