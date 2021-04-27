@@ -21,8 +21,5 @@ matching a certain pattern."
     (goto-char (point-max))
     ))
 
-
-(setq org-capture-templates
-      '(("j" "Journal" entry (function zerok/org-get-daily-file))))
-
+(setq org-adapt-indentation nil)
 (provide 'zerok-org)
