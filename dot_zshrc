@@ -1,6 +1,14 @@
+if [ -f /usr/local/opt/sqlite/bin/sqlite3 ]; then
+   export PATH="/usr/local/opt/sqlite/bin/:$PATH"
+fi
+export PATH="/usr/local/opt/curl/bin:$PATH"
+export PATH="/usr/local/opt/findutils/libexec/gnubin:$PATH"
 if [ -f ~/.zshrc.local ]; then
     source ~/.zshrc.local
 fi
 if [ -f ~/.zshrc.private ]; then
     source ~/.zshrc.private
+fi
+if [ -f $(brew --prefix asdf)/asdf.sh ]; then
+    source $(brew --prefix asdf)/asdf.sh
 fi

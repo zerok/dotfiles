@@ -1,4 +1,15 @@
-format = "$username$hostname$directory$git_branch$git_status${custom.kubeselect}$line_break$status$shell$character"
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+${custom.kubeselect}\
+${python}\
+$line_break\
+$status\
+$shell\
+$character"""
 
 [gcloud]
 disabled = true

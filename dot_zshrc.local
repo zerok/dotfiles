@@ -7,52 +7,44 @@ source /usr/local/opt/fzf/shell/completion.zsh
 [ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
 eval "$(direnv hook zsh)"
 
-precmd() {
-    local task
-    local k8s
-    local gitinfo
-    
-    export RPROMPT=""
-    if [ -f "~/.clocked/activeCode" ]; then
-	task=$(cat "~/.clocked/activeCode")
-	if [ ! -z "${task}" ]; then
-	    export PPROMPT="%{$fg[blue]%}[task: %B$task%b]%{$reset_color%}"
-	fi
-    fi
-    k8s=$(kubectl config current-context | tr -d '\n')
-    if [ ! -z "$k8s" ]; then
-	if [ ! -z "$RPROMPT" ]; then
-	   export RPROMPT="$RPROMPT "
-	fi
-	export RPROMPT="$RPROMPT%{$fg[yellow]%}[k8s: %B$k8s%b]%{$reset_color%}"
-    fi
-    gitinfo=$(git_prompt_info)
-    if [ ! -z "${gitinfo}" ]; then
-        if [ ! -z "${RPROMPT}" ]; then
-            RPROMPT="${RPROMPT} "
-        fi
-        RPROMPT="${RPROMPT}%{$fg[green]%}[git: %B${gitinfo}%b]%{$reset_color%}"
-    fi
+export NVM_DIR="$HOME/.nvm"
+[ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"
+
+[ -f ~/.cargo/env ] && source ~/.cargo/env
+unset RPROMPT
+eval "$(starship init zsh)"
+
+restart_ssh_agent() {
+    killall ssh-agent
+    killall -9 gpg-agent
+    eval `/usr/local/bin/gpg-agent --daemon`
+    # SSH_AUTH_SOCK=$HOME/.gnupg/S.gpg-agent.ssh
+    # export SSH_AUTH_SOCK
+    ssh-agent
 }
 
-export PROMPT="%F{blue}$%F{none} %~/ "
+restart_ssh_agent
 
-/usr/local/bin/gpg-agent --daemon
-export SSH_AUTH_SOCK=$HOME/.gnupg/S.gpg-agent.ssh
-{ eval `ssh-agent`; ssh-add -A; } &>/dev/null
-
+export PATH=/Users/zerok/.cargo/bin:/Users/zerok/bin:/opt/local/bin:/usr/local/texlive/2017/bin/x86_64-darwin/:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/MacGPG2/bin:/Users/zerok/.antigen/bundles/robbyrussell/oh-my-zsh/lib
+export MANPATH=/opt/local/man:
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export GOPATH="$HOME"
 # Enable Go Modules support in Go v1.11
 export GO111MODULE=on
-export EDITOR="nvim -i $HOME/.nvim.shada"
+export EDITOR="nvim"
+# export EDITOR=emacsclient
 export VAULT_ADDR=http://127.0.0.1:8200
 
-alias k=kubectl
-alias vim="${EDITOR}"
+alias vim="nvim"
 alias em="emacsclient"
 alias e=etcdctl
 alias l='exa -l'
 alias t='exa -l --tree'
+alias demo-mode='unset RPROMPT && precmd(){}'
+alias demo-mode-off='export precmd=$old_precmd'
+alias k='kubeselect run -- '
+alias ks='eval $(kubeselect select)'
 
+eval $(docker run --rm zerok/jupyter bash-func)
+export PATH=/usr/local/opt/emacs-head/bin/:$PATH
