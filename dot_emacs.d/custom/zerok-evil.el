@@ -14,6 +14,10 @@
 (use-package evil-leader
   :ensure t)
 
+(use-package evil-collection
+  :ensure t
+  :config (evil-collection-init))
+
 (use-package evil-commentary
   :ensure t
   :custom
