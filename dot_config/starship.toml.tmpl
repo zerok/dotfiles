@@ -16,6 +16,6 @@ disabled = true
 
 [custom.kubeselect]
 when = "true"
-command = "/Users/zerok/bin/kubeselect status"
+command = "{{ env "HOME" }}/bin/kubeselect status"
 style = "bold blue"
 format = "⛵️ [($output)]($style) "
