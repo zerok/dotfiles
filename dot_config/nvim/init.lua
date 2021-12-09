@@ -42,7 +42,12 @@ require('packer').startup(function(use)
     -- General tooling
     use { 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' }
     --use 'jremmen/vim-ripgrep'
-    use 'tpope/vim-commentary'
+    use {
+        'numToStr/Comment.nvim',
+        config = function()
+            require('Comment').setup{}
+        end
+    }
     use 'simnalamburt/vim-mundo'
     use 'hrsh7th/nvim-compe'
     use 'itchyny/lightline.vim'
