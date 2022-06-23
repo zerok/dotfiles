@@ -21,6 +21,10 @@ augroup restore_location
     autocmd BufReadPost * if @% !~# '\.git[\/\\]COMMIT_EDITMSG$' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 augroup end
 ]], false)
+
+-- Let's use ripgrep for grepping
+vim.o.grepprg="rg --vimgrep --smart-case --hidden"
+
 -- }}}
 -- Plugins {{{
 local fn = vim.fn
@@ -38,6 +42,7 @@ require('packer').startup(function(use)
     use 'tsandall/vim-rego'
     use 'hashivim/vim-terraform'
     use 'fourjay/vim-hurl'
+    use 'niklasl/vim-rdf'
 
     -- General tooling
     use { 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' }
@@ -54,12 +59,6 @@ require('packer').startup(function(use)
     use {
        'nvim-telescope/telescope.nvim',
         requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}},
-    }
-    use {
-        'kristijanhusak/orgmode.nvim',
-        config = function()
-            require('orgmode').setup{}
-        end
     }
     use {
         'neovim/nvim-lspconfig'
@@ -131,5 +130,15 @@ vim.cmd [[source /Users/zerok/src/gitlab.com/zerok/datasphere.vim/plugin/datasph
 vim.api.nvim_exec([[
 augroup markdown_bindings
   autocmd BufRead *.md nmap <buffer> <silent> <leader>p :!open -a "Marked 2" %:p<CR>
+  autocmd BufRead *.mdx setf markdown
 augroup end
 ]], false)
+
+local ft = require('Comment.ft')
+ft.set('hurl', '#%s')
+
+vim.api.nvim_create_user_command(
+    'Rg',
+    "execute 'silent grep <args>' | copen",
+    {nargs='+'}
+)
