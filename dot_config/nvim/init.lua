@@ -46,6 +46,7 @@ require('packer').startup(function(use)
 
     -- General tooling
     use { 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' }
+    use { 'anuvyklack/hydra.nvim' }
     --use 'jremmen/vim-ripgrep'
     use {
         'numToStr/Comment.nvim',
@@ -142,3 +143,47 @@ vim.api.nvim_create_user_command(
     "execute 'silent grep <args>' | copen",
     {nargs='+'}
 )
+
+local Hydra = require('hydra')
+Hydra({
+    name = "Window movement",
+    body = "<leader>w",
+    heads = {
+        {'v',
+            function()
+                vim.api.nvim_command("vsplit")
+            end,
+            {desc = "Split vertically"}},
+        {'h',
+            function()
+                vim.api.nvim_command("split")
+            end,
+            {desc = "Split horizontally"}},
+        {'+',
+            function()
+                vim.api.nvim_command("resize +1")
+            end,
+            {desc = "Higher"}},
+        {'-',
+            function()
+                vim.api.nvim_command("resize -1")
+            end,
+            {desc = "Lower"}},
+        {'>',
+            function()
+                vim.api.nvim_command("vertical resize +1")
+            end,
+            {desc = "Wider"}},
+        {'<',
+            function()
+                vim.api.nvim_command("vertical resize -1")
+            end,
+            {desc = "Narrower"}},
+        {'q',
+            nil,
+            {
+                desc = "Quit",
+                exit = true,
+            }},
+    },
+})
