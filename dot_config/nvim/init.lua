@@ -38,11 +38,15 @@ require('packer').startup(function(use)
     -- Languages
     use 'fatih/vim-go'
     use 'ledger/vim-ledger'
-    use 'rust-lang/rust.vim'
     use 'tsandall/vim-rego'
     use 'hashivim/vim-terraform'
     use 'fourjay/vim-hurl'
     use 'niklasl/vim-rdf'
+
+    use {
+        "luukvbaal/nnn.nvim",
+        config = function() require("nnn").setup() end
+    }
 
     -- General tooling
     use { 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' }
@@ -84,13 +88,28 @@ require('packer').startup(function(use)
     use {
         'jparise/vim-graphql'
     }
+    -- Clojure support
+    use {
+        'tpope/vim-dispatch'
+    }
+    use {
+        'radenling/vim-dispatch-neovim'
+    }
+    use {
+        'clojure-vim/vim-jack-in'
+    }
+    use {
+        'Olical/conjure'
+    }
     if packer_bootstrap then
         require('packer').sync()
     end
 end)
 
-require('lspconfig').gopls.setup {}
-require('lspconfig').tsserver.setup {}
+local lspconfig = require('lspconfig')
+lspconfig.gopls.setup {}
+lspconfig.tsserver.setup {}
+lspconfig.rust_analyzer.setup({})
 
 vim.o.completeopt = 'menuone,noselect'
 require('compe').setup {
@@ -115,6 +134,7 @@ vim.cmd [[colorscheme dracula_pro_van_helsing]]
 -- }}}
 -- Keymappings {{{
 vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 
 vim.api.nvim_set_keymap("i", "jk", [[<esc>]], {noremap = true, silent = true})
 vim.api.nvim_set_keymap("v", "<leader>c", [["+y]], {noremap = true, silent = true})

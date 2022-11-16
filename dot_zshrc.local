@@ -14,31 +14,15 @@ export NVM_DIR="$HOME/.nvm"
 unset RPROMPT
 eval "$(starship init zsh)"
 
-restart_ssh_agent() {
-    killall ssh-agent
-    killall -9 gpg-agent
-    eval `/usr/local/bin/gpg-agent --daemon`
-    # SSH_AUTH_SOCK=$HOME/.gnupg/S.gpg-agent.ssh
-    # export SSH_AUTH_SOCK
-    ssh-agent
-}
-
-restart_ssh_agent
-
-export PATH=/Users/zerok/.cargo/bin:/Users/zerok/bin:/opt/local/bin:/usr/local/texlive/2017/bin/x86_64-darwin/:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/MacGPG2/bin:/Users/zerok/.antigen/bundles/robbyrussell/oh-my-zsh/lib
+export PATH=$HOME/.cargo/bin:$HOME/bin:/opt/local/bin:/usr/local/texlive/2017/bin/x86_64-darwin/:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/MacGPG2/bin:$HOME/.antigen/bundles/robbyrussell/oh-my-zsh/lib
 export MANPATH=/opt/local/man:
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 export GOPATH="$HOME"
-# Enable Go Modules support in Go v1.11
-export GO111MODULE=on
 export EDITOR="nvim"
-# export EDITOR=emacsclient
 export VAULT_ADDR=http://127.0.0.1:8200
 
 alias vim="nvim"
-alias em="emacsclient"
-alias e=etcdctl
 alias l='exa -l'
 alias t='exa -l --tree'
 alias demo-mode='unset RPROMPT && precmd(){}'
@@ -46,5 +30,5 @@ alias demo-mode-off='export precmd=$old_precmd'
 alias k='kubeselect run -- '
 alias ks='eval $(kubeselect select)'
 
-eval $(docker run --rm zerok/jupyter bash-func)
-export PATH=/usr/local/opt/emacs-head/bin/:$PATH
+eval "$(zoxide init zsh)"
+export fpath=($HOME/.zsh/functions $fpath)
