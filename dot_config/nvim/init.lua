@@ -32,11 +32,22 @@ local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
 if fn.empty(fn.glob(install_path)) > 0 then
     packer_bootstrap = fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
 end
+
+local dracula_pro_path = fn.stdpath('data')..'/site/pack/packer/start/dracula_pro'
+local use_dracula_pro = false
+if fn.isdirectory(dracula_pro_path) then
+    use_dracula_pro = true
+end
+
 require('packer').startup(function(use)
     use 'wbthomason/packer.nvim'
 
     -- Themes
     use 'dracula/vim'
+
+    if use_dracula_pro then
+        use {dracula_pro_path}
+    end
 
     -- Languages
     use 'fatih/vim-go'
@@ -133,7 +144,11 @@ vim.g.svelte_indent_script = 0
 
 -- }}}
 -- Theme {{{
-vim.cmd [[colorscheme dracula]]
+if use_dracula_pro then
+    vim.cmd [[colorscheme dracula_pro]]
+else
+    vim.cmd [[colorscheme dracula]]
+end
 -- }}}
 -- Keymappings {{{
 vim.g.mapleader = " "
