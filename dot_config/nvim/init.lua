@@ -35,7 +35,7 @@ end
 
 local dracula_pro_path = fn.stdpath('data')..'/site/pack/packer/start/dracula_pro'
 local use_dracula_pro = false
-if fn.isdirectory(dracula_pro_path) then
+if fn.isdirectory(dracula_pro_path) == 1 then
     use_dracula_pro = true
 end
 
@@ -45,7 +45,7 @@ require('packer').startup(function(use)
     -- Themes
     use 'dracula/vim'
 
-    if use_dracula_pro then
+    if use_dracula_pro == 1 then
         use {dracula_pro_path}
     end
 
@@ -144,7 +144,7 @@ vim.g.svelte_indent_script = 0
 
 -- }}}
 -- Theme {{{
-if use_dracula_pro then
+if use_dracula_pro == 1 then
     vim.cmd [[colorscheme dracula_pro]]
 else
     vim.cmd [[colorscheme dracula]]
