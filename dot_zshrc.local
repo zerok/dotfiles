@@ -1,16 +1,11 @@
-source /usr/local/share/antigen/antigen.zsh
+source /opt/homebrew/share/antigen/antigen.zsh
 antigen use oh-my-zsh
 antigen apply
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-source /usr/local/opt/fzf/shell/completion.zsh
-[ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
+source /opt/homebrew/opt/fzf/shell/completion.zsh
 eval "$(direnv hook zsh)"
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"
-
-[ -f ~/.cargo/env ] && source ~/.cargo/env
 unset RPROMPT
 eval "$(starship init zsh)"
 
@@ -23,7 +18,7 @@ restart_ssh_agent() {
     ssh-agent
 }
 
-export PATH=$HOME/.cargo/bin:$HOME/bin:$HOME/.local/bin:/opt/local/bin:/Library/TeX/texbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/MacGPG2/bin:$HOME/.antigen/bundles/robbyrussell/oh-my-zsh/lib
+export PATH=$HOME/bin:$HOME/.local/bin:/Library/TeX/texbin:/usr/local/MacGPG2/bin:$HOME/.antigen/bundles/robbyrussell/oh-my-zsh/lib:$PATH
 export MANPATH=/opt/local/man:
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
@@ -43,4 +38,8 @@ export NNN_OPTS="dA"
 
 eval "$(zoxide init zsh)"
 export fpath=($HOME/.zsh/functions $fpath)
-source "$HOME/.cargo/env"
+
+# Rust setup
+[ -f ~/.cargo/env ] && source ~/.cargo/env
+export PATH=$HOME/.cargo/bin:$PATH
+
