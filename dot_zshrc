@@ -1,22 +1,82 @@
-eval "$(/opt/homebrew/bin/brew shellenv)"
+if [ -f "/opt/homebrew/bin/brew" ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+if [ -f "/usr/local/bin/brew" ]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+fi
 
-if [ -f /usr/local/opt/sqlite/bin/sqlite3 ]; then
-   export PATH="/usr/local/opt/sqlite/bin/:$PATH"
+if [ -f $HOMEBREW_PREFIX/opt/sqlite/bin/sqlite3 ]; then
+   export PATH="$HOMEBREW_PREFIX/opt/sqlite/bin/:$PATH"
 fi
 unset ASDF_DIR
 if [ -f $(brew --prefix asdf)/asdf.sh ]; then
     source $(brew --prefix asdf)/asdf.sh
 fi
 
-export PATH="/Library/TeX/texbin:$PATH"
-export PATH="/usr/local/opt/curl/bin:$PATH"
-export PATH="/usr/local/opt/findutils/libexec/gnubin:$PATH"
+if [ -f "$HOMEBREW_PREFIX/share/antigen/antigen.zsh" ]; then
+    source /$HOMEBREW_PREFIX/share/antigen/antigen.zsh
+    antigen use oh-my-zsh
+    antigen apply
+fi
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+if [ -f "$HOMEBREW_PREFIX/opt/fzf/shell/completion.zsh" ]; then
+    source $HOMEBREW_PREFIX/opt/fzf/shell/completion.zsh
+fi
+eval "$(direnv hook zsh)"
+
+restart_ssh_agent() {
+    killall ssh-agent
+    killall -9 gpg-agent
+    eval `/usr/local/bin/gpg-agent --daemon`
+    SSH_AUTH_SOCK=$HOME/.gnupg/S.gpg-agent.ssh
+    export SSH_AUTH_SOCK
+    ssh-agent
+}
+
+export PATH=:/usr/local/MacGPG2/bin:$HOME/.antigen/bundles/robbyrussell/oh-my-zsh/lib:$PATH
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export EDITOR="nvim"
+export VAULT_ADDR=http://127.0.0.1:8200
+
+alias vim="nvim"
+alias l='exa -l'
+alias t='exa -l --tree'
+alias demo-mode='unset RPROMPT && precmd(){}'
+alias demo-mode-off='export precmd=$old_precmd'
+alias k='kubeselect run -- '
+alias ks='eval $(kubeselect select)'
+
+export NNN_OPTS="dA"
+
+eval "$(zoxide init zsh)"
+export fpath=($HOME/.zsh/functions $fpath)
+
+# Go setup
+export GOPATH="$HOME"
+
+# Rust setup
+[ -f ~/.cargo/env ] && source ~/.cargo/env
+export PATH=$HOME/.cargo/bin:$PATH
+
+# Python setup
 export PATH="$HOME/.poetry/bin:$PATH"
 
-# Allow for local overrides
-if [ -f ~/.zshrc.local ]; then
-    source ~/.zshrc.local
-fi
+# TeX
+export PATH=/Library/TeX/texbin:$PATH
+
+# Prompt
+unset RPROMPT
+eval "$(starship init zsh)"
+
+# System overrides from homebrew
+export PATH="$HOMEBREW_PREFIX/opt/curl/bin:$PATH"
+export PATH="$HOMEBREW_PREFIX/opt/findutils/libexec/gnubin:$PATH"
+
+# Local path extensions used for scripts etc. that should have the highest
+# priority:
+export PATH=$HOME/bin:$HOME/.local/bin:$PATH
 
 # Overrides that are *not* checked in
 if [ -f ~/.zshrc.private ]; then
