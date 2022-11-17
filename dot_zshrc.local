@@ -14,7 +14,16 @@ export NVM_DIR="$HOME/.nvm"
 unset RPROMPT
 eval "$(starship init zsh)"
 
-export PATH=$HOME/.cargo/bin:$HOME/bin:/opt/local/bin:/usr/local/texlive/2017/bin/x86_64-darwin/:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/MacGPG2/bin:$HOME/.antigen/bundles/robbyrussell/oh-my-zsh/lib
+restart_ssh_agent() {
+    killall ssh-agent
+    killall -9 gpg-agent
+    eval `/usr/local/bin/gpg-agent --daemon`
+    SSH_AUTH_SOCK=$HOME/.gnupg/S.gpg-agent.ssh
+    export SSH_AUTH_SOCK
+    ssh-agent
+}
+
+export PATH=$HOME/.cargo/bin:$HOME/bin:$HOME/.local/bin:/opt/local/bin:/Library/TeX/texbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/MacGPG2/bin:$HOME/.antigen/bundles/robbyrussell/oh-my-zsh/lib
 export MANPATH=/opt/local/man:
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
@@ -30,5 +39,8 @@ alias demo-mode-off='export precmd=$old_precmd'
 alias k='kubeselect run -- '
 alias ks='eval $(kubeselect select)'
 
+export NNN_OPTS="dA"
+
 eval "$(zoxide init zsh)"
 export fpath=($HOME/.zsh/functions $fpath)
+source "$HOME/.cargo/env"

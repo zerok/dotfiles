@@ -1,14 +1,17 @@
 if [ -f /usr/local/opt/sqlite/bin/sqlite3 ]; then
    export PATH="/usr/local/opt/sqlite/bin/:$PATH"
 fi
+export PATH="/Library/TeX/texbin:$PATH"
 export PATH="/usr/local/opt/curl/bin:$PATH"
 export PATH="/usr/local/opt/findutils/libexec/gnubin:$PATH"
+export PATH="$HOME/.poetry/bin:$PATH"
 if [ -f ~/.zshrc.local ]; then
     source ~/.zshrc.local
 fi
 if [ -f ~/.zshrc.private ]; then
     source ~/.zshrc.private
 fi
+unset ASDF_DIR
 if [ -f $(brew --prefix asdf)/asdf.sh ]; then
     source $(brew --prefix asdf)/asdf.sh
 fi
