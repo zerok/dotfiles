@@ -35,6 +35,9 @@ end
 require('packer').startup(function(use)
     use 'wbthomason/packer.nvim'
 
+    -- Themes
+    use 'dracula/vim'
+
     -- Languages
     use 'fatih/vim-go'
     use 'ledger/vim-ledger'
@@ -130,7 +133,7 @@ vim.g.svelte_indent_script = 0
 
 -- }}}
 -- Theme {{{
-vim.cmd [[colorscheme dracula_pro_van_helsing]]
+vim.cmd [[colorscheme dracula]]
 -- }}}
 -- Keymappings {{{
 vim.g.mapleader = " "
@@ -145,8 +148,6 @@ vim.api.nvim_set_keymap("n", "<leader>g", [[:Neogit<cr>]], {noremap = true, sile
 vim.api.nvim_set_keymap("n", "<leader><leader>", [[:HopChar1<cr>]], {noremap = true, silent = true})
 vim.api.nvim_set_keymap("n", "<space>", [[<nop>]], {noremap = true, silent = true})
 -- }}}
-
-vim.cmd [[source /Users/zerok/src/gitlab.com/zerok/datasphere.vim/plugin/datasphere.vim]]
 
 vim.api.nvim_exec([[
 augroup markdown_bindings
