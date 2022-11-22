@@ -12,6 +12,9 @@ unset ASDF_DIR
 if [ -f $(brew --prefix asdf)/asdf.sh ]; then
     source $(brew --prefix asdf)/asdf.sh
 fi
+if [ -f $(brew --prefix asdf)/libexec/asdf.sh ]; then
+    source $(brew --prefix asdf)/libexec/asdf.sh
+fi
 
 if [ -f "$HOMEBREW_PREFIX/share/antigen/antigen.zsh" ]; then
     source /$HOMEBREW_PREFIX/share/antigen/antigen.zsh
