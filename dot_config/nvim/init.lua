@@ -56,6 +56,7 @@ require('packer').startup(function(use)
     use 'hashivim/vim-terraform'
     use 'fourjay/vim-hurl'
     use 'niklasl/vim-rdf'
+    use 'cappyzawa/starlark.vim'
 
     use {
         "luukvbaal/nnn.nvim",
