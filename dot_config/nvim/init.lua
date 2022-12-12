@@ -123,8 +123,16 @@ end)
 
 local lspconfig = require('lspconfig')
 lspconfig.gopls.setup {}
-lspconfig.tsserver.setup {}
 lspconfig.rust_analyzer.setup({})
+lspconfig.denols.setup {
+  on_attach = on_attach,
+  root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
+}
+
+lspconfig.tsserver.setup {
+  on_attach = on_attach,
+  root_dir = lspconfig.util.root_pattern("package.json"),
+}
 
 vim.o.completeopt = 'menuone,noselect'
 require('compe').setup {
