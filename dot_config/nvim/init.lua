@@ -59,6 +59,7 @@ require('packer').startup(function(use)
     use 'cappyzawa/starlark.vim'
     use 'GutenYe/json5.vim'
     use 'google/vim-jsonnet'
+    use 'imsnif/kdl.vim'
 
     use {
         "luukvbaal/nnn.nvim",
