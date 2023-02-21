@@ -58,6 +58,7 @@ require('packer').startup(function(use)
     use 'niklasl/vim-rdf'
     use 'cappyzawa/starlark.vim'
     use 'GutenYe/json5.vim'
+    use 'google/vim-jsonnet'
 
     use {
         "luukvbaal/nnn.nvim",
