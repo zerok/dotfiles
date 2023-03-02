@@ -1,0 +1,8 @@
+[user]
+    name = Horst Gutmann
+    email = {{ .email }}
+    signingkey = {{ (index (splitList "\n" (output "gpg" "--list-keys" "Horst Gutmann")) 1) | trim }}
+[init]
+    defaultBranch = main
+[commit]
+    gpgSign = true
