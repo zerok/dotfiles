@@ -43,11 +43,7 @@ require('packer').startup(function(use)
     use 'wbthomason/packer.nvim'
 
     -- Themes
-    use 'dracula/vim'
-
-    if use_dracula_pro == 1 then
-        use {dracula_pro_path}
-    end
+    use 'phanviet/vim-monokai-pro'
 
     -- Languages
     use 'fatih/vim-go'
@@ -167,11 +163,8 @@ vim.g.svelte_indent_script = 0
 
 -- }}}
 -- Theme {{{
-if use_dracula_pro == 1 then
-    vim.cmd [[colorscheme dracula_pro]]
-else
-    vim.cmd [[colorscheme dracula]]
-end
+vim.cmd [[colorscheme monokai_pro]]
+vim.o.background = "dark"
 -- }}}
 -- Keymappings {{{
 vim.g.mapleader = " "
