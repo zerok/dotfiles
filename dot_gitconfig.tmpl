@@ -6,3 +6,7 @@
     defaultBranch = main
 [commit]
     gpgSign = true
+{{ if .gpg_program }}
+[gpg]
+    program = {{ .gpg_program }}
+{{ end }}
