@@ -170,14 +170,15 @@ vim.o.background = "dark"
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
-vim.api.nvim_set_keymap("i", "jk", [[<esc>]], {noremap = true, silent = true})
-vim.api.nvim_set_keymap("v", "<leader>c", [["+y]], {noremap = true, silent = true})
-vim.api.nvim_set_keymap("n", "<leader>b", [[:Telescope buffers<cr>]], {noremap = true, silent = true})
-vim.api.nvim_set_keymap("n", "<leader>B", [[:b#<cr>]], {noremap = true, silent = true})
-vim.api.nvim_set_keymap("n", "<leader>f", [[:Telescope find_files<cr>]], {noremap = true, silent = true})
-vim.api.nvim_set_keymap("n", "<leader>g", [[:Neogit<cr>]], {noremap = true, silent = true})
-vim.api.nvim_set_keymap("n", "<leader><leader>", [[:HopChar1<cr>]], {noremap = true, silent = true})
-vim.api.nvim_set_keymap("n", "<space>", [[<nop>]], {noremap = true, silent = true})
+vim.keymap.set("i", "jk", [[<esc>]])
+vim.keymap.set("v", "<leader>c", [["+y]])
+vim.keymap.set("n", "<leader>b", [[:Telescope buffers<cr>]])
+vim.keymap.set("n", "<leader>B", [[:b#<cr>]])
+vim.keymap.set("n", "<leader>f", [[:Telescope find_files<cr>]])
+vim.keymap.set("n", "<leader>g", [[:Neogit<cr>]])
+vim.keymap.set("n", "<leader><leader>", [[:HopChar1<cr>]])
+vim.keymap.set("n", "<space>", [[<nop>]])
+vim.keymap.set("n", "<leader>i", vim.lsp.buf.hover)
 -- }}}
 
 vim.api.nvim_exec([[
