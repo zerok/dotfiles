@@ -16,13 +16,14 @@ local ledger_toggle_cleared = function(opts)
         local repl_string = "s/^" .. prefix .. " \\*/" .. prefix .. "/"
         vim.cmd(repl_string)
     else
-        local repl_string = "s/^" .. prefix .. " /" .. prefix .. " */"
+        local repl_string = "s/^" .. prefix .. " /" .. prefix .. " * /"
         vim.cmd(repl_string)
     end
     vim.api.nvim_win_set_cursor(0, pos)
 end
 
 vim.api.nvim_buf_create_user_command(0, "LedgerToggleCleared", function(opts) ledger_toggle_cleared(opts) end, {})
+vim.keymap.set("n", "<localleader>c", [[:LedgerToggleCleared<cr>]])
 
 -- hi! link ledgerTransactionDate DraculaYellow
 -- hi! link ledgerTransactionConfirmed DraculaComment

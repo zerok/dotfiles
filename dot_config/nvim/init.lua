@@ -168,7 +168,7 @@ vim.o.background = "dark"
 -- }}}
 -- Keymappings {{{
 vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+vim.g.maplocalleader = "\\"
 
 vim.keymap.set("i", "jk", [[<esc>]])
 vim.keymap.set("v", "<leader>c", [["+y]])
