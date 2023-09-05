@@ -28,97 +28,74 @@ vim.o.grepprg="rg --vimgrep --smart-case --hidden"
 -- }}}
 -- Plugins {{{
 local fn = vim.fn
-local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
-if fn.empty(fn.glob(install_path)) > 0 then
-    packer_bootstrap = fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+local lazypath = fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
 end
+vim.opt.rtp:prepend(lazypath)
 
-local dracula_pro_path = fn.stdpath('data')..'/site/pack/packer/start/dracula_pro'
-local use_dracula_pro = false
-if fn.isdirectory(dracula_pro_path) == 1 then
-    use_dracula_pro = true
-end
-
-require('packer').startup(function(use)
-    use 'wbthomason/packer.nvim'
+require('lazy').setup({
+    'wbthomason/packer.nvim',
 
     -- Themes
-    use 'phanviet/vim-monokai-pro'
+    'phanviet/vim-monokai-pro',
 
     -- Languages
-    use 'fatih/vim-go'
-    use 'ledger/vim-ledger'
-    use 'tsandall/vim-rego'
-    use 'hashivim/vim-terraform'
-    use 'fourjay/vim-hurl'
-    use 'niklasl/vim-rdf'
-    use 'cappyzawa/starlark.vim'
-    use 'GutenYe/json5.vim'
-    use 'google/vim-jsonnet'
-    use 'imsnif/kdl.vim'
+    'fatih/vim-go',
+    'ledger/vim-ledger',
+    'tsandall/vim-rego',
+    'hashivim/vim-terraform',
+    'fourjay/vim-hurl',
+    'niklasl/vim-rdf',
+    'cappyzawa/starlark.vim',
+    'GutenYe/json5.vim',
+    'google/vim-jsonnet',
+    'imsnif/kdl.vim',
+    'evanleck/vim-svelte',
+    'jjo/vim-cue',
+    'jparise/vim-graphql',
+    -- Clojure support
+    'tpope/vim-dispatch',
+    'radenling/vim-dispatch-neovim',
+    'clojure-vim/vim-jack-in',
+    'Olical/conjure',
 
-    use {
+    {
         "luukvbaal/nnn.nvim",
         config = function() require("nnn").setup() end
-    }
+    },
 
     -- General tooling
-    use { 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' }
-    use { 'anuvyklack/hydra.nvim' }
+    { 'TimUntersberger/neogit', dependencies = {'nvim-lua/plenary.nvim'}},
+    'anuvyklack/hydra.nvim',
     --use 'jremmen/vim-ripgrep'
-    use {
+    {
         'numToStr/Comment.nvim',
         config = function()
             require('Comment').setup{}
         end
-    }
-    use 'simnalamburt/vim-mundo'
-    use 'hrsh7th/nvim-compe'
-    use 'itchyny/lightline.vim'
-    use {
+    },
+    'simnalamburt/vim-mundo',
+    'hrsh7th/nvim-compe',
+    'itchyny/lightline.vim',
+    {
        'nvim-telescope/telescope.nvim',
-        requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}},
-    }
-    use {
-        'neovim/nvim-lspconfig'
-    }
-    use {
-        'phaazon/hop.nvim'
-    }
-    use {
-        'preservim/nerdtree'
-    }
-    use {
-        -- vimade dims inactive buffers down so that active buffers are easier
-        -- to recognize
-        'TaDaa/vimade'
-    }
-    use {
-        'evanleck/vim-svelte'
-    }
-    use {
-        'jjo/vim-cue'
-    }
-    use {
-        'jparise/vim-graphql'
-    }
-    -- Clojure support
-    use {
-        'tpope/vim-dispatch'
-    }
-    use {
-        'radenling/vim-dispatch-neovim'
-    }
-    use {
-        'clojure-vim/vim-jack-in'
-    }
-    use {
-        'Olical/conjure'
-    }
-    if packer_bootstrap then
-        require('packer').sync()
-    end
-end)
+        dependencies = {'nvim-lua/popup.nvim', 'nvim-lua/plenary.nvim'},
+    },
+    'neovim/nvim-lspconfig',
+    'phaazon/hop.nvim',
+    'preservim/nerdtree',
+    -- vimade dims inactive buffers down so that active buffers are easier
+    -- to recognize
+    'TaDaa/vimade',
+})
 
 local lspconfig = require('lspconfig')
 lspconfig.gopls.setup {}
