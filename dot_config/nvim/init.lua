@@ -73,7 +73,16 @@ require('lazy').setup({
     },
 
     -- General tooling
-    { 'TimUntersberger/neogit', dependencies = {'nvim-lua/plenary.nvim'}},
+    { 
+        'NeogitOrg/neogit',
+        dependencies = {
+          "nvim-lua/plenary.nvim",         -- required
+          "nvim-telescope/telescope.nvim", -- optional
+          "sindrets/diffview.nvim",        -- optional
+          "ibhagwan/fzf-lua",              -- optional
+        },
+       config = true,
+    },
     'anuvyklack/hydra.nvim',
     --use 'jremmen/vim-ripgrep'
     {
