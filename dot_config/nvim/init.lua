@@ -92,13 +92,73 @@ require('lazy').setup({
         end
     },
     'simnalamburt/vim-mundo',
-    'hrsh7th/nvim-compe',
+
+    -- LSP configuration
+    'neovim/nvim-lspconfig',
+    'hrsh7th/cmp-nvim-lsp',
+    'hrsh7th/cmp-vsnip',
+    'hrsh7th/vim-vsnip',
+    {
+        'hrsh7th/nvim-cmp',
+        dependencies = {'neovim/nvim-lspconfig'},
+        config = function()
+            local cmp = require('cmp')
+            cmp.setup {
+                snippet = {
+                    expand = function(args)
+                      vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+                    end,
+                },
+                mapping = {
+                    ["<C-j>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
+                    ["<C-k>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
+                    ["<CR>"] = cmp.mapping.confirm({select = true, behavior = cmp.ConfirmBehavior.Replace}),
+                },
+                sources = cmp.config.sources({
+                    { name = 'nvim_lsp' },
+                    { name = 'vsnip' }, -- For vsnip users.
+                    { name = 'buffer' },
+                }),
+            };
+            local capabilities = require('cmp_nvim_lsp').default_capabilities()
+            local lspconfig = require('lspconfig')
+            lspconfig.gopls.setup {
+                capabilities = capabilities,
+            }
+            lspconfig.rust_analyzer.setup {
+                capabilities = capabilities,
+            }
+            lspconfig.denols.setup {
+                capabilities = capabilities,
+                on_attach = on_attach,
+                root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
+            }
+
+            lspconfig.tsserver.setup {
+                capabilities = capabilities,
+                on_attach = on_attach,
+                root_dir = lspconfig.util.root_pattern("package.json"),
+            }
+
+            lspconfig.denols.setup {
+                capabilities = capabilities,
+                on_attach = on_attach,
+                root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
+            }
+
+            lspconfig.tsserver.setup {
+                capabilities = capabilities,
+                on_attach = on_attach,
+                root_dir = lspconfig.util.root_pattern("package.json"),
+            }
+        end
+    },
+
     'itchyny/lightline.vim',
     {
        'nvim-telescope/telescope.nvim',
         dependencies = {'nvim-lua/popup.nvim', 'nvim-lua/plenary.nvim'},
     },
-    'neovim/nvim-lspconfig',
     'phaazon/hop.nvim',
     'preservim/nerdtree',
     -- vimade dims inactive buffers down so that active buffers are easier
@@ -106,40 +166,18 @@ require('lazy').setup({
     'TaDaa/vimade',
 })
 
-local lspconfig = require('lspconfig')
-lspconfig.gopls.setup {}
-lspconfig.rust_analyzer.setup({})
-lspconfig.denols.setup {
-  on_attach = on_attach,
-  root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
-}
-
-lspconfig.tsserver.setup {
-  on_attach = on_attach,
-  root_dir = lspconfig.util.root_pattern("package.json"),
-}
-
-lspconfig.denols.setup {
-  on_attach = on_attach,
-  root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
-}
-
-lspconfig.tsserver.setup {
-  on_attach = on_attach,
-  root_dir = lspconfig.util.root_pattern("package.json"),
-}
 
 
-vim.o.completeopt = 'menuone,noselect'
-require('compe').setup {
-    enabled = true;
-    autocomplete = true;
-    source = {
-        nvim_lsp = true;
-        nvim_lua = true;
-        omni = false;
-    };
-};
+-- vim.o.completeopt = 'menuone,noselect'
+-- require('compe').setup {
+--     enabled = true;
+--     autocomplete = true;
+--     source = {
+--         nvim_lsp = true;
+--         nvim_lua = true;
+--         omni = false;
+--     };
+-- };
 
 -- ledger configuration
 -- In order to get proper account completion I have to specify a custom command
