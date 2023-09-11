@@ -151,6 +151,8 @@ require('lazy').setup({
                 on_attach = on_attach,
                 root_dir = lspconfig.util.root_pattern("package.json"),
             }
+
+            lspconfig.lua_ls.setup {}
         end
     },
 
