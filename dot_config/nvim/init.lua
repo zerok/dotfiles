@@ -93,7 +93,7 @@ require('lazy').setup({
        config = true,
     },
     'anuvyklack/hydra.nvim',
-    --use 'jremmen/vim-ripgrep'
+    'duane9/nvim-rg',
     {
         'numToStr/Comment.nvim',
         config = function()
@@ -226,12 +226,6 @@ augroup end
 
 local ft = require('Comment.ft')
 ft.set('hurl', '#%s')
-
-vim.api.nvim_create_user_command(
-    'Rg',
-    "execute 'silent grep <args>' | copen",
-    {nargs='+'}
-)
 
 local Hydra = require('hydra')
 Hydra({
