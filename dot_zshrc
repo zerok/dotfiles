@@ -77,7 +77,9 @@ eval "$(starship init zsh)"
 export PATH="$HOMEBREW_PREFIX/opt/curl/bin:$PATH"
 export PATH="$HOMEBREW_PREFIX/opt/findutils/libexec/gnubin:$PATH"
 
-source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
+if [ -f $(brew --prefix asdf)/share/google-cloud-sdk/path.zsh.inc ]; then
+    source "$(brew --prefix)/share/google-cloud-sdk/path.zsh.inc"
+fi
 
 # Local path extensions used for scripts etc. that should have the highest
 # priority:
