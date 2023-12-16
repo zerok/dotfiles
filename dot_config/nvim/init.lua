@@ -51,7 +51,16 @@ require('lazy').setup({
     'fatih/vim-go',
     'ledger/vim-ledger',
     'tsandall/vim-rego',
-    'hashivim/vim-terraform',
+    {
+        'hashivim/vim-terraform',
+        config = function()
+            vim.api.nvim_exec([[
+            augroup terraform_bindings
+              autocmd BufWrite *.tf TerraformFmt
+            augroup end
+            ]], false)
+        end,
+    },
     'fourjay/vim-hurl',
     'niklasl/vim-rdf',
     'cappyzawa/starlark.vim',
@@ -153,6 +162,7 @@ require('lazy').setup({
             }
 
             lspconfig.lua_ls.setup {}
+            lspconfig.terraformls.setup {}
         end
     },
 
