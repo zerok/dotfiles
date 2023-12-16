@@ -82,7 +82,7 @@ require('lazy').setup({
     },
 
     -- General tooling
-    { 
+    {
         'NeogitOrg/neogit',
         dependencies = {
           "nvim-lua/plenary.nvim",         -- required
@@ -119,6 +119,7 @@ require('lazy').setup({
                     end,
                 },
                 mapping = {
+                    ["<C-Space>"] = cmp.mapping.complete(),
                     ["<C-j>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
                     ["<C-k>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
                     ["<CR>"] = cmp.mapping.confirm({select = true, behavior = cmp.ConfirmBehavior.Replace}),
@@ -173,6 +174,17 @@ require('lazy').setup({
     },
     'phaazon/hop.nvim',
     'preservim/nerdtree',
+    {
+        'nvim-treesitter/nvim-treesitter',
+        build = ":TSUpdate",
+        config = function()
+            require'nvim-treesitter.configs'.setup {
+                ensure_installed = {'go'},
+                highlight = {enable = true},
+                indent = {enable = true},
+            }
+        end
+    },
     -- vimade dims inactive buffers down so that active buffers are easier
     -- to recognize
     'TaDaa/vimade',
