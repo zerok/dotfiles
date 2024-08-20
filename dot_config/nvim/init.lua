@@ -190,6 +190,8 @@ require('lazy').setup({
     'TaDaa/vimade',
 })
 
+require('pin-github-action').setup()
+
 
 
 -- vim.o.completeopt = 'menuone,noselect'
