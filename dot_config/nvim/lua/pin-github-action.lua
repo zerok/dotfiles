@@ -115,7 +115,11 @@ function mod.PinGitHubAction()
         pin(repo, commit, version)
     else
         print("Looking for latest release for " .. repo)
-        local latest_tag = string.gsub(get_cmd_output({"gh", "release", "list", "--repo", repo, "--json", "isLatest,tagName", "--jq", ". | map(select(.isLatest==true)) | .[0].tagName"}), "%s", "")
+        local cmd = {"gh", "release", "list", "--repo", repo, "--json", "isLatest,tagName", "--jq", ". | map(select(.isLatest==true)) | .[0].tagName"}
+        if vim.api == nil then
+            cmd = {"gh", "release", "list", "--repo", repo, "--json", "isLatest,tagName", "--jq", "'. | map(select(.isLatest==true)) | .[0].tagName'"}
+        end
+        local latest_tag = string.gsub(get_cmd_output(cmd), "%s", "")
         if latest_tag == "" then
             print("No latest tag found")
             return
