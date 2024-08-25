@@ -45,7 +45,8 @@ assert(string.match("uses: actions/create-github-app-token@v1", notpinned_versio
 local get_cmd_output = function(list)
     if vim.system ~= nil then
         local proc = vim.system(list):wait()
-        return proc["stdout"]
+        local output = proc["stdout"]
+        return output
     end
     local proc = assert(io.popen(table.concat(list, " "), "r"))
     local output = assert(proc:read("*a"))
@@ -108,13 +109,18 @@ function mod.PinGitHubAction()
             return
         end
     end
-    -- TODO: Get the latest version matching the passed version (e.g. v1.1.1 for v1)
 
-    if version ~= nil then
+    if version ~= nil and version ~= "" then
         local commit = get_tag_commit(repo, version)
         pin(repo, commit, version)
     else
-        local latest_tag = string.gsub(get_cmd_output({"gh", "release", "list", "--repo", repo, "--json", "isLatest,tagName", "--jq", "'.[] | select(.isLatest==true) | .tagName'"}), "%s", "")
+        print("Looking for latest release for " .. repo)
+        local latest_tag = string.gsub(get_cmd_output({"gh", "release", "list", "--repo", repo, "--json", "isLatest,tagName", "--jq", ". | map(select(.isLatest==true)) | .[0].tagName"}), "%s", "")
+        if latest_tag == "" then
+            print("No latest tag found")
+            return
+        end
+        print("Latest tag:", latest_tag)
         local commit = get_tag_commit(repo, latest_tag)
         pin(repo, commit, latest_tag)
     end
