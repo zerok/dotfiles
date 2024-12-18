@@ -144,7 +144,7 @@ require('lazy').setup({
                 root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
             }
 
-            lspconfig.tsserver.setup {
+            lspconfig.ts_ls.setup {
                 capabilities = capabilities,
                 on_attach = on_attach,
                 root_dir = lspconfig.util.root_pattern("package.json"),
@@ -154,12 +154,6 @@ require('lazy').setup({
                 capabilities = capabilities,
                 on_attach = on_attach,
                 root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
-            }
-
-            lspconfig.tsserver.setup {
-                capabilities = capabilities,
-                on_attach = on_attach,
-                root_dir = lspconfig.util.root_pattern("package.json"),
             }
 
             lspconfig.lua_ls.setup {}
