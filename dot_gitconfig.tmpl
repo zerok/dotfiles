@@ -6,7 +6,12 @@
     defaultBranch = main
 [commit]
     gpgSign = true
-{{ if .gpg_program }}
 [gpg]
+{{ if (index . "gpg_program") }}
     program = {{ .gpg_program }}
+{{ end }}
+{{ if (index . "gpg_ssh_program") }}
+    format = ssh
+[gpg "ssh"]
+    program = {{ .gpg_ssh_program }}
 {{ end }}
