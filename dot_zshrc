@@ -4,6 +4,9 @@ fi
 if [ -f "/usr/local/bin/brew" ]; then
     eval "$(/usr/local/bin/brew shellenv)"
 fi
+if [ -f "/home/linuxbrew/.linuxbrew/bin/brew" ]; then
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
 
 if [ -f $HOMEBREW_PREFIX/opt/sqlite/bin/sqlite3 ]; then
    export PATH="$HOMEBREW_PREFIX/opt/sqlite/bin/:$PATH"
@@ -44,8 +47,8 @@ export EDITOR="nvim"
 export VAULT_ADDR=http://127.0.0.1:8200
 
 alias vim="nvim"
-alias l='exa -l'
-alias t='exa -l --tree'
+alias l='eza -l'
+alias t='eza -l --tree'
 alias demo-mode='unset RPROMPT && precmd(){}'
 alias demo-mode-off='export precmd=$old_precmd'
 alias k='kubeselect run -- '

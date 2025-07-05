@@ -7,7 +7,7 @@ brew install \
     asdf \
     direnv \
     nvim \
-    exa \
+    eza \
     zoxide \
     fzf \
     starship \
