@@ -25,6 +25,14 @@ if [ -f "$HOMEBREW_PREFIX/share/antigen/antigen.zsh" ]; then
     antigen apply
 fi
 
+if [ -f "$HOMEBREW_PREFIX/share/google-cloud-sdk/path.zsh.inc" ]; then
+    source $HOMEBREW_PREFIX/share/google-cloud-sdk/path.zsh.inc
+fi
+
+if [ -d $HOMEBREW_PREFIX/opt/rustup/bin ]; then
+   export PATH="$HOMEBREW_PREFIX/opt/rustup/bin/:$PATH"
+fi
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 if [ -f "$HOMEBREW_PREFIX/opt/fzf/shell/completion.zsh" ]; then
     source $HOMEBREW_PREFIX/opt/fzf/shell/completion.zsh
