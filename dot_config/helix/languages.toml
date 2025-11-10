@@ -1,0 +1,32 @@
+[[language]]
+name = "go"
+auto-format = true
+text-width = 180
+formatter = { command = "goimports" }
+roots = ["go.work", "go.mod"]
+language-servers = [ "gopls" ]
+
+[[language]]
+name = "yaml"
+file-types = ["yaml", "yml"]
+indent = { unit = "  ", tab-width = 2 }
+scope = "source.yaml"
+
+[[language]]
+name = "json"
+scope = "source.json"
+injection-regex = "json"
+indent = { unit = "  ", tab-width = 2 }
+file-types = [
+    "json",
+    "ipynb",
+]
+
+[[language]]
+name = "json5"
+scope = "source.json5"
+injection-regex = "json5"
+file-types = ["json5"]
+language-servers = []
+comment-token = "//"
+indent = { tab-width = 2, unit = "  " }
