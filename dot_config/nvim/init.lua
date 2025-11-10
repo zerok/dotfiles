@@ -132,28 +132,30 @@ require('lazy').setup({
             };
             local capabilities = require('cmp_nvim_lsp').default_capabilities()
             local lspconfig = require('lspconfig')
-            lspconfig.gopls.setup {
+            vim.lsp.config('gopls', {
                 capabilities = capabilities,
-            }
-            lspconfig.rust_analyzer.setup {
+            })
+            vim.lsp.enable('gopls')
+            vim.lsp.config('rust_analyzer', {
                 capabilities = capabilities,
-            }
-            lspconfig.denols.setup {
+            })
+            vim.lsp.enable('rust_analyzer')
+            vim.lsp.config('denols', {
                 capabilities = capabilities,
                 on_attach = on_attach,
                 root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
                 inlay_hints = { enabled = true },
-            }
-
-            lspconfig.ts_ls.setup {
+            })
+            vim.lsp.enable('denols')
+            vim.lsp.config('ts_ls', {
                 capabilities = capabilities,
                 on_attach = on_attach,
                 root_dir = lspconfig.util.root_pattern("package.json"),
                 inlay_hints = { enabled = true },
-            }
-
-            lspconfig.lua_ls.setup {}
-            lspconfig.terraformls.setup {}
+            })
+            vim.lsp.enable('ts_ls')
+            vim.lsp.enable('lua_ls')
+            vim.lsp.enable('terraformls')
         end
     },
 
