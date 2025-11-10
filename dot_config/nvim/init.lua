@@ -142,18 +142,14 @@ require('lazy').setup({
                 capabilities = capabilities,
                 on_attach = on_attach,
                 root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
+                inlay_hints = { enabled = true },
             }
 
             lspconfig.ts_ls.setup {
                 capabilities = capabilities,
                 on_attach = on_attach,
                 root_dir = lspconfig.util.root_pattern("package.json"),
-            }
-
-            lspconfig.denols.setup {
-                capabilities = capabilities,
-                on_attach = on_attach,
-                root_dir = lspconfig.util.root_pattern("deno.json", "deno.jsonc"),
+                inlay_hints = { enabled = true },
             }
 
             lspconfig.lua_ls.setup {}
@@ -174,8 +170,11 @@ require('lazy').setup({
         config = function()
             require'nvim-treesitter.configs'.setup {
                 ensure_installed = {'go'},
-                highlight = {enable = true},
-                indent = {enable = true},
+                highlight = {
+                    enable = true,
+                    disable = {"yaml"},
+                },
+                indent = {enable = false},
             }
         end
     },
@@ -185,8 +184,6 @@ require('lazy').setup({
 })
 
 require('pin-github-action').setup()
-
-
 
 -- vim.o.completeopt = 'menuone,noselect'
 -- require('compe').setup {
@@ -223,6 +220,7 @@ vim.keymap.set("n", "<leader>g", [[:Neogit<cr>]])
 vim.keymap.set("n", "<leader><leader>", [[:HopChar1<cr>]])
 vim.keymap.set("n", "<space>", [[<nop>]])
 vim.keymap.set("n", "<leader>i", vim.lsp.buf.hover)
+vim.keymap.set("n", "<leader>r", [[:Telescope lsp_references<cr>]])
 -- }}}
 
 vim.api.nvim_exec([[
