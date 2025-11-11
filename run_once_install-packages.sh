@@ -4,14 +4,26 @@ if [ ! -x "${brew_bin}" ]; then
 	exit 0
 fi
 brew install \
-    asdf \
-    direnv \
-    nvim \
-    eza \
-    zoxide \
-    fzf \
-    starship \
-    curl \
-    findutils \
     antigen \
-    nnn
+    curl \
+    deno \
+    direnv \
+    eza \
+    findutils \
+    fzf \
+    gh \
+    go \
+    gopls \
+    helix \
+    kubernetes-cli \
+    lazygit \
+    lua-language-server \
+    nnn \
+    neovim \
+    python \
+    ripgrep \
+    starship \
+    uv \
+    zoxide \
+    zsh
+
