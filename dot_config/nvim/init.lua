@@ -62,62 +62,22 @@ require('lazy').setup({
         end,
     },
     'fourjay/vim-hurl',
-    'niklasl/vim-rdf',
     'cappyzawa/starlark.vim',
     'GutenYe/json5.vim',
     'google/vim-jsonnet',
-    'imsnif/kdl.vim',
-    'evanleck/vim-svelte',
-    'jjo/vim-cue',
-    'jparise/vim-graphql',
-    -- Clojure support
-    'tpope/vim-dispatch',
-    'radenling/vim-dispatch-neovim',
-    'clojure-vim/vim-jack-in',
-    'Olical/conjure',
 
-    {
-        "luukvbaal/nnn.nvim",
-        config = function() require("nnn").setup() end
-    },
-
-    -- General tooling
-    {
-        'NeogitOrg/neogit',
-        dependencies = {
-          "nvim-lua/plenary.nvim",         -- required
-          "nvim-telescope/telescope.nvim", -- optional
-          "sindrets/diffview.nvim",        -- optional
-          "ibhagwan/fzf-lua",              -- optional
-        },
-       config = true,
-    },
-    'anuvyklack/hydra.nvim',
     'duane9/nvim-rg',
-    {
-        'numToStr/Comment.nvim',
-        config = function()
-            require('Comment').setup{}
-        end
-    },
     'simnalamburt/vim-mundo',
 
     -- LSP configuration
     'neovim/nvim-lspconfig',
     'hrsh7th/cmp-nvim-lsp',
-    'hrsh7th/cmp-vsnip',
-    'hrsh7th/vim-vsnip',
     {
         'hrsh7th/nvim-cmp',
         dependencies = {'neovim/nvim-lspconfig'},
         config = function()
             local cmp = require('cmp')
             cmp.setup {
-                snippet = {
-                    expand = function(args)
-                      vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-                    end,
-                },
                 mapping = {
                     ["<C-Space>"] = cmp.mapping.complete(),
                     ["<C-j>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
@@ -126,7 +86,6 @@ require('lazy').setup({
                 },
                 sources = cmp.config.sources({
                     { name = 'nvim_lsp' },
-                    { name = 'vsnip' }, -- For vsnip users.
                     { name = 'buffer' },
                 }),
             };
@@ -164,39 +123,9 @@ require('lazy').setup({
        'nvim-telescope/telescope.nvim',
         dependencies = {'nvim-lua/popup.nvim', 'nvim-lua/plenary.nvim'},
     },
-    'phaazon/hop.nvim',
-    'preservim/nerdtree',
-    {
-        'nvim-treesitter/nvim-treesitter',
-        build = ":TSUpdate",
-        config = function()
-            require'nvim-treesitter.configs'.setup {
-                ensure_installed = {'go'},
-                highlight = {
-                    enable = true,
-                    disable = {"yaml"},
-                },
-                indent = {enable = false},
-            }
-        end
-    },
-    -- vimade dims inactive buffers down so that active buffers are easier
-    -- to recognize
-    'TaDaa/vimade',
 })
 
 require('pin-github-action').setup()
-
--- vim.o.completeopt = 'menuone,noselect'
--- require('compe').setup {
---     enabled = true;
---     autocomplete = true;
---     source = {
---         nvim_lsp = true;
---         nvim_lua = true;
---         omni = false;
---     };
--- };
 
 -- ledger configuration
 -- In order to get proper account completion I have to specify a custom command
@@ -232,49 +161,3 @@ augroup markdown_bindings
 augroup end
 ]], false)
 
-local ft = require('Comment.ft')
-ft.set('hurl', '#%s')
-
-local Hydra = require('hydra')
-Hydra({
-    name = "Window movement",
-    body = "<leader>w",
-    heads = {
-        {'v',
-            function()
-                vim.api.nvim_command("vsplit")
-            end,
-            {desc = "Split vertically"}},
-        {'h',
-            function()
-                vim.api.nvim_command("split")
-            end,
-            {desc = "Split horizontally"}},
-        {'+',
-            function()
-                vim.api.nvim_command("resize +1")
-            end,
-            {desc = "Higher"}},
-        {'-',
-            function()
-                vim.api.nvim_command("resize -1")
-            end,
-            {desc = "Lower"}},
-        {'>',
-            function()
-                vim.api.nvim_command("vertical resize +1")
-            end,
-            {desc = "Wider"}},
-        {'<',
-            function()
-                vim.api.nvim_command("vertical resize -1")
-            end,
-            {desc = "Narrower"}},
-        {'q',
-            nil,
-            {
-                desc = "Quit",
-                exit = true,
-            }},
-    },
-})
