@@ -66,8 +66,15 @@ require('lazy').setup({
     'GutenYe/json5.vim',
     'google/vim-jsonnet',
 
+    -- Utils
     'duane9/nvim-rg',
     'simnalamburt/vim-mundo',
+    {
+        'nvim-mini/mini.comment',
+        config = function ()
+            require('mini.comment').setup()
+        end
+    },
 
     -- LSP configuration
     'neovim/nvim-lspconfig',
